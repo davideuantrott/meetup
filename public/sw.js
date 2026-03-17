@@ -2,6 +2,12 @@
 // Workbox is injected via vite-plugin-pwa; this file handles push notifications
 // and background sync in addition to Workbox's caching.
 
+// Take control immediately when a new SW is installed
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', event => {
+  event.waitUntil(self.clients.claim());
+});
+
 // Workbox precache manifest (injected at build time)
 self.__WB_MANIFEST;
 
