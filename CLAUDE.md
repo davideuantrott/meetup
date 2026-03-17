@@ -151,10 +151,22 @@ All tables have Row Level Security. Users can only access data for groups they b
 - [x] Database migrations run in Supabase SQL Editor (001 + 002)
 - [x] Google OAuth configured (Google Cloud Console + Supabase Auth provider)
 - [x] Dev server running (`npm run dev`) — Google sign-in confirmed working
+- [x] Deployed to GitHub Pages at `https://davideuantrott.github.io/meetup`
+- [x] GitHub Actions workflow building and deploying on every push to `main`
+- [x] Google OAuth sign-in working on live site
 - [ ] Edge Functions deployed (send-notification, send-nudges, send-invite)
 - [ ] Resend API key added to Supabase Edge Function secrets
 - [ ] VAPID private key added to Supabase Edge Function secrets
 - [ ] Nudge cron wired up (needs `pg_cron` on Pro, or external scheduler on free tier)
+- [ ] PWA icons created (icon-192.png and icon-512.png missing from public/icons/)
+
+## Known fixes applied
+
+- `vite.config.ts`: added `base: '/meetup/'` for GitHub Pages subdirectory
+- `src/App.tsx`: added `basename="/meetup"` to `BrowserRouter`
+- `src/hooks/useAuth.ts`: `redirectTo` uses `VITE_APP_URL` instead of `window.location.origin`
+- `src/pages/AuthCallback.tsx`: waits for `SIGNED_IN` event instead of calling `getSession()` immediately
+- `VITE_APP_URL` GitHub secret must have no trailing slash: `https://davideuantrott.github.io/meetup`
 
 ---
 
