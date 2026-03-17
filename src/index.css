@@ -1,34 +1,234 @@
 @import "tailwindcss";
 
-/* Base */
+/* ============================================================
+   DESIGN SYSTEM — Swimming Pals Planner
+   Source: swimming-pals-design-system.jsonc
+   ============================================================ */
+
+@theme {
+  /* Fonts */
+  --font-display: 'Nunito Sans', 'Segoe UI', sans-serif;
+  --font-body: 'DM Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Sage green palette */
+  --color-sage-50:  #F2F5EE;
+  --color-sage-100: #E4EBDC;
+  --color-sage-200: #C8D6B9;
+  --color-sage-300: #A4BC91;
+  --color-sage-400: #7FA06A;
+  --color-sage-500: #5C8348;
+  --color-sage-600: #476834;
+  --color-sage-700: #334D24;
+  --color-sage-900: #1A2B12;
+
+  /* Accent: chartreuse */
+  --color-accent:        #C8F542;
+  --color-accent-hover:  #B8E035;
+  --color-accent-muted:  #E8FAAB;
+  --color-on-accent:     #1A1A1A;
+
+  /* Backgrounds */
+  --color-bg-primary:   #FFFFFF;
+  --color-bg-secondary: #F5F7F2;
+  --color-bg-tertiary:  #EBF0E6;
+
+  /* Text */
+  --color-text-primary:   #1A1A1A;
+  --color-text-secondary: #6B6B6B;
+  --color-text-tertiary:  #9E9E9E;
+  --color-text-inverse:   #FFFFFF;
+  --color-text-link:      #5C8348;
+
+  /* Semantic */
+  --color-success:       #4CAF50;
+  --color-success-light: #E8F5E9;
+  --color-warning:       #FF9800;
+  --color-warning-light: #FFF3E0;
+  --color-error:         #F44336;
+  --color-error-light:   #FFEBEE;
+
+  /* Surface */
+  --color-surface-card:        #FFFFFF;
+  --color-surface-divider:     #E0E0E0;
+  --color-surface-input-bg:    #FAFBF8;
+  --color-surface-input-border: #D0D0D0;
+
+  /* Border radius */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-xxl:  28px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.14);
+  --shadow-accent-glow: 0 4px 20px rgba(200, 245, 66, 0.35);
+
+  /* Motion */
+  --duration-instant: 100ms;
+  --duration-fast:    200ms;
+  --duration-normal:  300ms;
+  --duration-slow:    500ms;
+  --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-enter:   cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit:    cubic-bezier(0.4, 0, 1, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #f9fafb;
-  color: #111827;
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* Reduce motion */
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================ */
+
+.display-large {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.display-small {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.heading-lg {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.heading-md {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.heading-sm {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.body-lg {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.body-md {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.caption {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.chip-label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   SCROLLBAR SUPPRESSION (carousels)
+   ============================================================ */
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ============================================================
+   DIALOG / MODAL
+   ============================================================ */
+
+dialog::backdrop {
+  background: rgba(26, 26, 26, 0.5);
+}
+
+dialog[open] {
+  animation: dialog-in var(--duration-normal) var(--ease-enter);
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   FOCUS RING
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid var(--color-sage-500);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
-/* Native dialog backdrop */
-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.4);
-}
+/* ============================================================
+   PRESS INTERACTION
+   ============================================================ */
 
-/* Hide scrollbar on carousels */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.btn-press:active {
+  transform: scale(0.97);
+}

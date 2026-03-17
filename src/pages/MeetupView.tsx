@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { ChevronLeft, Share2, Plus, CheckCircle, XCircle, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useGroup } from '../hooks/useGroup';
 import { useMeetup } from '../hooks/useMeetup';
@@ -39,8 +40,8 @@ export function MeetupView() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400">Loading…</p>
+      <main className="min-h-screen flex items-center justify-center bg-[#F5F7F2]">
+        <div className="w-10 h-10 rounded-full bg-[#C8F542] animate-pulse" />
       </main>
     );
   }
@@ -56,17 +57,11 @@ export function MeetupView() {
 
   async function handleRespond(slotId: string, availability: Availability) {
     if (!profile) return;
-
-    // Optimistic commentary update
     const slot = slots.find(s => s.id === slotId);
     const oldResponse = slot?.responses?.find(r => r.user_id === profile.id);
-    const newCommentary = getMeetupCommentary(
-      members,
-      allResponses,
-      { user: profile, oldAvailability: oldResponse?.availability, newAvailability: availability }
-    );
-    setCommentary(newCommentary);
-
+    setCommentary(getMeetupCommentary(members, allResponses, {
+      user: profile, oldAvailability: oldResponse?.availability, newAvailability: availability,
+    }));
     await respond(slotId, profile.id, availability);
   }
 
@@ -83,20 +78,11 @@ export function MeetupView() {
     navigate('/');
   }
 
-  async function handleRemoveSlot(slot: ProposedSlot) {
-    await removeSlot(slot.id, meetup!.id);
-    setShowRemoveModal(null);
-  }
-
   function handleShare() {
     const url = `${window.location.origin}/meetup/${meetupId}`;
     const title = meetup?.title ?? 'Meetup';
-    const text = `${title} — pick your dates on Swimming Pals Planner`;
-    if (navigator.share) {
-      navigator.share({ title, text, url });
-    } else {
-      navigator.clipboard.writeText(url);
-    }
+    if (navigator.share) navigator.share({ title, text: `${title} — Swimming Pals Planner`, url });
+    else navigator.clipboard.writeText(url);
   }
 
   if (isConfirmed && meetup.confirmed_details) {
@@ -104,7 +90,6 @@ export function MeetupView() {
       <ConfirmedView
         meetup={meetup}
         members={members}
-        currentUser={profile}
         isCreator={isCreator}
         onCancel={() => setShowCancelModal(true)}
         onShare={handleShare}
@@ -120,77 +105,75 @@ export function MeetupView() {
             </>
           }
         >
-          <p className="text-sm text-gray-600">Everyone will be notified. This can't be undone.</p>
+          <p className="text-[0.875rem] text-[#6B6B6B]">Everyone will be notified. This can't be undone.</p>
         </Modal>
       </ConfirmedView>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#F5F7F2] flex flex-col" style={{ fontFamily: 'var(--font-body)' }}>
+
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
+      <header className="bg-[#F5F7F2] sticky top-0 z-10 pt-4 pb-2 px-5">
+        <div className="max-w-[480px] mx-auto flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
-            aria-label="Back to home"
-            className="p-2 -ml-2 rounded-xl hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            aria-label="Back"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#F5F7F2] text-[#6B6B6B] hover:bg-[#EBF0E6] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C8348] shrink-0"
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ChevronLeft size={22} strokeWidth={1.75} />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="font-semibold text-gray-900 truncate">{meetup.title}</h1>
+            <h1
+              className="text-[1.25rem] font-bold text-[#1A1A1A] truncate leading-tight tracking-[-0.01em]"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {meetup.title}
+            </h1>
             {meetup.location && (
-              <p className="text-xs text-gray-400 truncate">{meetup.location}</p>
+              <p className="text-[0.75rem] text-[#6B6B6B] truncate">{meetup.location}</p>
             )}
           </div>
           <button
             onClick={handleShare}
             aria-label="Share meetup"
-            className="p-2 rounded-xl hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#F5F7F2] text-[#6B6B6B] hover:bg-[#EBF0E6] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C8348] shrink-0"
           >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
+            <Share2 size={18} strokeWidth={1.75} />
           </button>
         </div>
       </header>
 
-      <main className="flex-1 max-w-lg mx-auto w-full px-4 py-5 flex flex-col gap-5">
+      <main className="flex-1 max-w-[480px] mx-auto w-full px-5 py-4 flex flex-col gap-5 pb-10">
+
         {/* Commentary */}
         <div
-          className="bg-white rounded-2xl border border-gray-200 p-4"
+          className="bg-white rounded-2xl px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
           aria-live="polite"
           aria-atomic="true"
         >
-          <p className="text-sm text-gray-600 italic">{commentary || 'Waiting for responses.'}</p>
+          <p className="text-[0.875rem] text-[#6B6B6B] italic leading-relaxed">
+            {commentary || 'Waiting for responses.'}
+          </p>
         </div>
 
         {/* Avatar row */}
         <div
-          className="flex gap-3 flex-wrap"
-          aria-label="Group members and their response status"
+          className="flex gap-4 flex-wrap"
+          aria-label="Group members and response status"
         >
           {members.map(m => {
             if (!m.user) return null;
             const userResponses = allResponses.filter(r => r.user_id === m.user_id);
-            const hasAnyYes = userResponses.some(r => r.availability === 'yes');
-            const hasAnyMaybe = userResponses.some(r => r.availability === 'maybe');
-            const hasAnyNo = userResponses.every(r => r.availability === 'no') && userResponses.length > 0;
-            const hasResponded = userResponses.length > 0;
-            const avail = hasAnyYes ? 'yes' : hasAnyMaybe ? 'maybe' : hasAnyNo ? 'no' : undefined;
-
+            const hasYes = userResponses.some(r => r.availability === 'yes');
+            const hasMaybe = userResponses.some(r => r.availability === 'maybe');
+            const allNo = userResponses.length > 0 && userResponses.every(r => r.availability === 'no');
+            const avail = hasYes ? 'yes' : hasMaybe ? 'maybe' : allNo ? 'no' : undefined;
             return (
-              <div key={m.user_id} className="flex flex-col items-center gap-0.5">
-                <Avatar
-                  user={m.user}
-                  availability={avail}
-                  hasNotResponded={!hasResponded}
-                  size="md"
-                />
-                <span className="text-xs text-gray-400">{m.user.name.split(' ')[0]}</span>
+              <div key={m.user_id} className="flex flex-col items-center gap-1">
+                <Avatar user={m.user} availability={avail} hasNotResponded={!userResponses.length} size="md" />
+                <span className="text-[0.625rem] text-[#9E9E9E] font-medium">{m.user.name.split(' ')[0]}</span>
               </div>
             );
           })}
@@ -200,9 +183,8 @@ export function MeetupView() {
         <section aria-labelledby="dates-heading">
           <h2 id="dates-heading" className="sr-only">Date options</h2>
           <div
-            className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth"
+            className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory no-scrollbar"
             role="list"
-            style={{ scrollbarWidth: 'none' }}
           >
             {slots
               .sort((a, b) => a.date.localeCompare(b.date))
@@ -221,11 +203,9 @@ export function MeetupView() {
                       type="button"
                       aria-label={`Remove ${formatSlotDate(slot)}`}
                       onClick={() => setShowRemoveModal(slot)}
-                      className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 transition-colors"
+                      className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full text-[#9E9E9E] hover:text-[#F44336] hover:bg-[#FFEBEE] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F44336]"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      <X size={14} strokeWidth={2} />
                     </button>
                   )}
                 </div>
@@ -242,24 +222,19 @@ export function MeetupView() {
                 size="lg"
                 className="w-full"
               >
+                <CheckCircle size={18} strokeWidth={2} />
                 Confirm {formatSlotDate(bestSlot)}
               </Button>
             )}
             <div className="flex gap-2">
-              {slots.length < 5 && (
-                <AddSlotButton meetupId={meetup.id} onAdd={addSlot} />
-              )}
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() => setShowCancelModal(true)}
-                className="flex-1"
-              >
+              {slots.length < 5 && <AddSlotInline meetupId={meetup.id} onAdd={addSlot} />}
+              <Button variant="danger" size="sm" onClick={() => setShowCancelModal(true)} className="flex-1">
+                <XCircle size={16} strokeWidth={1.75} />
                 Cancel meetup
               </Button>
             </div>
             {!bestSlot && slots.length > 0 && (
-              <p className="text-sm text-gray-500 text-center italic">
+              <p className="text-[0.8125rem] text-[#6B6B6B] text-center italic">
                 No clear winner. You might need more options.
               </p>
             )}
@@ -269,36 +244,23 @@ export function MeetupView() {
         {/* Reactions */}
         <ReactionsBar
           reactions={reactions}
-          currentUser={profile}
           onReact={content => addReaction(meetup.id, profile.id, content)}
           disabled={!isOpen}
         />
       </main>
 
-      {/* Share prompt */}
+      {/* Share prompt toast */}
       {showSharePrompt && (
-        <div
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-sm px-4"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="bg-gray-900 text-white rounded-2xl p-4 flex items-center justify-between gap-3 shadow-lg">
-            <p className="text-sm">Share to WhatsApp so people actually respond.</p>
-            <div className="flex gap-2 shrink-0">
-              <button
-                onClick={handleShare}
-                className="text-sm font-semibold text-indigo-300 hover:text-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
-              >
-                Share
-              </button>
-              <button
-                onClick={() => setShowSharePrompt(false)}
-                aria-label="Dismiss"
-                className="text-sm text-gray-400 hover:text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded"
-              >
-                ✕
-              </button>
-            </div>
+        <div className="fixed bottom-6 left-0 right-0 flex justify-center px-5 z-50" aria-live="polite">
+          <div className="bg-[#1A1A1A] text-white rounded-2xl px-5 py-4 flex items-center gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)] max-w-[400px] w-full">
+            <div className="w-1 self-stretch rounded-full bg-[#C8F542] shrink-0" aria-hidden="true" />
+            <p className="text-[0.875rem] flex-1">Share to WhatsApp so people actually respond.</p>
+            <button onClick={handleShare} className="text-[0.875rem] font-semibold text-[#C8F542] hover:text-[#E8FAAB] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8F542] rounded">
+              Share
+            </button>
+            <button onClick={() => setShowSharePrompt(false)} aria-label="Dismiss" className="text-[#6B6B6B] hover:text-[#9E9E9E] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B6B6B] rounded">
+              <X size={16} strokeWidth={2} />
+            </button>
           </div>
         </div>
       )}
@@ -318,8 +280,8 @@ export function MeetupView() {
         {confirmingSlotId && (() => {
           const slot = slots.find(s => s.id === confirmingSlotId);
           return slot ? (
-            <p className="text-sm text-gray-600">
-              Confirm <strong>{formatSlotDate(slot)}</strong>? Everyone will be notified.
+            <p className="text-[0.875rem] text-[#6B6B6B]">
+              Confirm <strong className="text-[#1A1A1A]">{formatSlotDate(slot)}</strong>? Everyone will be notified.
             </p>
           ) : null;
         })()}
@@ -337,26 +299,28 @@ export function MeetupView() {
           </>
         }
       >
-        <p className="text-sm text-gray-600">Everyone will be notified. This can't be undone.</p>
+        <p className="text-[0.875rem] text-[#6B6B6B]">Everyone will be notified. This can't be undone.</p>
       </Modal>
 
       {/* Remove slot modal */}
       {showRemoveModal && (
         <Modal
-          open={!!showRemoveModal}
+          open
           title="Remove this date?"
           onClose={() => setShowRemoveModal(null)}
           actions={
             <>
               <Button variant="ghost" size="sm" onClick={() => setShowRemoveModal(null)}>Keep it</Button>
-              <Button variant="danger" size="sm" onClick={() => handleRemoveSlot(showRemoveModal)}>Remove</Button>
+              <Button variant="danger" size="sm" onClick={async () => { await removeSlot(showRemoveModal.id, meetup!.id); setShowRemoveModal(null); }}>
+                Remove
+              </Button>
             </>
           }
         >
           {(() => {
             const count = (showRemoveModal.responses ?? []).length;
             return (
-              <p className="text-sm text-gray-600">
+              <p className="text-[0.875rem] text-[#6B6B6B]">
                 {count > 0
                   ? `${count} ${count === 1 ? 'person has' : 'people have'} responded to this date. Remove anyway?`
                   : `Remove ${formatSlotDate(showRemoveModal)}?`}
@@ -369,7 +333,7 @@ export function MeetupView() {
   );
 }
 
-function AddSlotButton({ meetupId, onAdd }: {
+function AddSlotInline({ meetupId, onAdd }: {
   meetupId: string;
   onAdd: (meetupId: string, slot: { date: string; time_type: 'none'; time_value: null }) => Promise<void>;
 }) {
@@ -389,7 +353,8 @@ function AddSlotButton({ meetupId, onAdd }: {
   return (
     <>
       <Button variant="secondary" size="sm" onClick={() => setOpen(true)} className="flex-1">
-        + Add date
+        <Plus size={16} strokeWidth={2} />
+        Add date
       </Button>
       <Modal
         open={open}
@@ -407,7 +372,8 @@ function AddSlotButton({ meetupId, onAdd }: {
           value={date}
           onChange={e => setDate(e.target.value)}
           min={new Date().toISOString().split('T')[0]}
-          className="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[44px]"
+          className="w-full rounded-xl border border-[#D0D0D0] bg-[#FAFBF8] px-4 text-[1rem] min-h-[48px] focus:outline-none focus:border-[#5C8348] transition-colors"
+          style={{ fontFamily: 'var(--font-body)' }}
           aria-label="Date"
         />
       </Modal>

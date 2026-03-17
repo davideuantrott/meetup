@@ -1,56 +1,70 @@
-import type { User } from '../../types';
-import type { Availability } from '../../types';
+import type { User, Availability } from '../../types';
 
 interface AvatarProps {
   user: User;
-  availability?: Availability | 'none';
-  size?: 'sm' | 'md' | 'lg';
+  availability?: Availability;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   isOddOneOut?: boolean;
   hasNotResponded?: boolean;
 }
 
-const sizeClasses = {
-  sm: 'w-8 h-8 text-sm',
-  md: 'w-10 h-10 text-base',
-  lg: 'w-14 h-14 text-xl',
+const sizePx: Record<string, number> = {
+  xs: 24, sm: 32, md: 44, lg: 56, xl: 80,
+};
+
+const textSize: Record<string, string> = {
+  xs: 'text-[0.625rem]',
+  sm: 'text-[0.75rem]',
+  md: 'text-[1rem]',
+  lg: 'text-[1.25rem]',
+  xl: 'text-[1.75rem]',
 };
 
 export function Avatar({ user, availability, size = 'md', isOddOneOut, hasNotResponded }: AvatarProps) {
+  const px = sizePx[size];
   const initial = user.name.charAt(0).toUpperCase();
 
-  const ringClass =
+  // Ring colour
+  const ringStyle =
     availability === 'yes'
-      ? 'ring-2 ring-green-500 ring-offset-1'
+      ? { boxShadow: '0 0 0 2.5px #FFFFFF, 0 0 0 5px #4CAF50' }
       : availability === 'maybe'
-      ? 'ring-2 ring-amber-400 ring-offset-1 opacity-80'
+      ? { boxShadow: '0 0 0 2.5px #FFFFFF, 0 0 0 5px #FF9800', opacity: 0.85 }
       : availability === 'no'
-      ? 'grayscale opacity-60'
+      ? { filter: 'grayscale(1)', opacity: 0.55 }
       : hasNotResponded
-      ? 'grayscale opacity-50'
-      : '';
+      ? { filter: 'grayscale(0.6)', opacity: 0.5 }
+      : {};
 
   return (
-    <div className="relative inline-flex flex-col items-center gap-0.5">
+    <div className="relative inline-flex flex-col items-center">
       {isOddOneOut && (
         <span
-          className="absolute -top-4 left-1/2 -translate-x-1/2 text-xs"
-          aria-label="Couldn't make it"
-          title="Couldn't make the confirmed date"
+          className="absolute -top-5 left-1/2 -translate-x-1/2 text-sm"
+          aria-label="Couldn't make the confirmed date"
+          title="Couldn't make it"
         >
           🌧️
         </span>
       )}
       <div
         className={`
-          ${sizeClasses[size]}
-          ${ringClass}
-          rounded-full flex items-center justify-center font-semibold text-white
-          transition-all duration-200 relative
+          relative rounded-full flex items-center justify-center font-semibold text-white select-none
+          transition-all duration-[200ms]
+          ${textSize[size]}
         `}
-        style={{ backgroundColor: user.avatar_colour }}
+        style={{
+          width: px,
+          height: px,
+          backgroundColor: user.avatar_colour,
+          minWidth: px,
+          ...ringStyle,
+        }}
         aria-label={`${user.name}${availability ? ` — ${availability}` : ''}`}
       >
         {initial}
+
+        {/* Overlay icons */}
         {availability === 'no' && (
           <span
             className="absolute -bottom-0.5 -right-0.5 text-xs leading-none"

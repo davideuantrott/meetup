@@ -15,7 +15,11 @@ export function Input({ label, error, helpText, id, className = '', ...rest }: I
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={inputId} className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor={inputId}
+          className="text-[0.8125rem] font-medium text-[#1A1A1A]"
+          style={{ fontFamily: 'var(--font-body)' }}
+        >
           {label}
         </label>
       )}
@@ -24,23 +28,26 @@ export function Input({ label, error, helpText, id, className = '', ...rest }: I
         aria-describedby={describedBy}
         aria-invalid={error ? 'true' : undefined}
         className={`
-          w-full rounded-xl border px-4 py-2.5 text-base
-          transition-colors duration-150 min-h-[44px]
-          placeholder:text-gray-400
-          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-          disabled:bg-gray-50 disabled:text-gray-400
-          ${error ? 'border-red-400 bg-red-50' : 'border-gray-300 bg-white'}
+          w-full rounded-xl px-4 text-[1rem] min-h-[48px]
+          bg-[#FAFBF8] placeholder:text-[#9E9E9E]
+          transition-all duration-[200ms]
+          focus:outline-none focus:ring-0
+          disabled:bg-[#F5F7F2] disabled:text-[#9E9E9E]
+          ${error
+            ? 'border border-[#F44336] bg-[#FFEBEE]'
+            : 'border border-[#D0D0D0] focus:border-[#5C8348] shadow-[inset_0_1px_3px_rgba(0,0,0,0.06)]'}
           ${className}
         `}
+        style={{ fontFamily: 'var(--font-body)' }}
         {...rest}
       />
       {helpText && !error && (
-        <p id={helpId} className="text-sm text-gray-500">
+        <p id={helpId} className="text-[0.75rem] text-[#6B6B6B]" style={{ fontFamily: 'var(--font-body)' }}>
           {helpText}
         </p>
       )}
       {error && (
-        <p id={errorId} className="text-sm text-red-600" role="alert">
+        <p id={errorId} className="text-[0.75rem] text-[#F44336]" role="alert" style={{ fontFamily: 'var(--font-body)' }}>
           {error}
         </p>
       )}

@@ -16,8 +16,8 @@ export default defineConfig({
         name: 'Swimming Pals Planner',
         short_name: 'Swim Pals',
         description: 'Scheduling meetups for people who find it very hard.',
-        theme_color: '#6366f1',
-        background_color: '#f9fafb',
+        theme_color: '#F5F7F2',
+        background_color: '#FFFFFF',
         display: 'standalone',
         start_url: '/',
         icons: [

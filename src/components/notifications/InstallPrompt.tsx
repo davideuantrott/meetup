@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Download, X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -10,15 +11,12 @@ export function InstallPrompt() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('installPromptDismissed');
-    if (dismissed) return;
-
+    if (localStorage.getItem('installPromptDismissed')) return;
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setShow(true);
     };
-
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
@@ -32,9 +30,7 @@ export function InstallPrompt() {
     if (!deferredPrompt) return;
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setShow(false);
-    }
+    if (outcome === 'accepted') setShow(false);
     setDeferredPrompt(null);
   }
 
@@ -44,25 +40,28 @@ export function InstallPrompt() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-50"
+      className="fixed bottom-6 left-0 right-0 flex justify-center px-5 z-50"
     >
-      <div className="bg-gray-900 text-white rounded-2xl p-4 flex items-center justify-between gap-3 shadow-lg">
-        <p className="text-sm">Install this. Push notifications are worth it.</p>
-        <div className="flex gap-2 shrink-0">
-          <button
-            onClick={install}
-            className="text-sm font-semibold text-indigo-300 hover:text-indigo-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
-          >
-            Install
-          </button>
-          <button
-            onClick={dismiss}
-            aria-label="Dismiss install prompt"
-            className="text-sm text-gray-400 hover:text-gray-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded"
-          >
-            ✕
-          </button>
-        </div>
+      <div
+        className="bg-[#1A1A1A] text-white rounded-2xl px-5 py-4 flex items-center gap-3 shadow-[0_8px_32px_rgba(0,0,0,0.2)] max-w-[400px] w-full"
+        style={{ fontFamily: 'var(--font-body)' }}
+      >
+        <div className="w-1 self-stretch rounded-full bg-[#C8F542] shrink-0" aria-hidden="true" />
+        <p className="text-[0.875rem] flex-1">Install this. Push notifications are worth it.</p>
+        <button
+          onClick={install}
+          className="flex items-center gap-1.5 text-[0.875rem] font-semibold text-[#C8F542] hover:text-[#E8FAAB] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8F542] rounded"
+        >
+          <Download size={14} strokeWidth={2} />
+          Install
+        </button>
+        <button
+          onClick={dismiss}
+          aria-label="Dismiss install prompt"
+          className="text-[#6B6B6B] hover:text-[#9E9E9E] shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6B6B6B] rounded"
+        >
+          <X size={16} strokeWidth={2} />
+        </button>
       </div>
     </div>
   );

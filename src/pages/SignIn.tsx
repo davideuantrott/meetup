@@ -19,17 +19,12 @@ export function SignIn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Preserve invite code across auth
   useEffect(() => {
-    if (inviteCode) {
-      sessionStorage.setItem('pendingInviteCode', inviteCode);
-    }
+    if (inviteCode) sessionStorage.setItem('pendingInviteCode', inviteCode);
   }, [inviteCode]);
 
   useEffect(() => {
-    if (session) {
-      navigate('/');
-    }
+    if (session) navigate('/');
   }, [session, navigate]);
 
   async function handleGoogle() {
@@ -42,22 +37,15 @@ export function SignIn() {
     setLoading(true);
     try {
       if (mode === 'signup') {
-        if (!name.trim()) {
-          setError('Please enter your name.');
-          return;
-        }
+        if (!name.trim()) { setError('Please enter your name.'); return; }
         const { error } = await signUpWithEmail(email, password, name);
-        if (error) {
-          setError(error.message);
-        }
+        if (error) setError(error.message);
       } else {
         const { error } = await signInWithEmail(email, password);
         if (error) {
-          if (error.message.includes('Invalid login')) {
-            setError('Incorrect email or password. Try again, or create an account.');
-          } else {
-            setError(error.message);
-          }
+          setError(error.message.includes('Invalid login')
+            ? 'Incorrect email or password. Try again, or create an account.'
+            : error.message);
         }
       }
     } finally {
@@ -66,18 +54,45 @@ export function SignIn() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
-      <div className="w-full max-w-sm flex flex-col gap-8">
-        <header className="text-center flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-gray-900">Swimming Pals Planner</h1>
-          <p className="text-gray-500 text-sm">
+    <main
+      className="min-h-screen flex flex-col items-center justify-center p-5"
+      style={{ background: 'linear-gradient(160deg, #F2F5EE 0%, #EBF0E6 50%, #F5F7F2 100%)' }}
+    >
+      <div className="w-full max-w-[380px] flex flex-col gap-8">
+
+        {/* Brand */}
+        <header className="text-center flex flex-col gap-3">
+          {/* Logo mark */}
+          <div className="mx-auto w-16 h-16 rounded-full bg-[#C8F542] flex items-center justify-center shadow-[0_4px_20px_rgba(200,245,66,0.4)]">
+            <span className="text-3xl" aria-hidden="true">🏊</span>
+          </div>
+          <div>
+            <h1
+              className="text-[2rem] leading-[1.15] tracking-[-0.02em] text-[#1A1A1A]"
+              style={{ fontFamily: 'var(--font-display)', fontWeight: 800 }}
+            >
+              Swimming Pals
+            </h1>
+            <p
+              className="text-[1.25rem] leading-[1.2] tracking-[-0.01em] text-[#6B6B6B]"
+              style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
+            >
+              {inviteCode ? "You've been invited." : 'Planner'}
+            </p>
+          </div>
+          <p className="text-[0.875rem] text-[#6B6B6B]" style={{ fontFamily: 'var(--font-body)' }}>
             {inviteCode
-              ? "You've been invited. Sign in to join."
-              : 'Scheduling, but for people who find it very hard.'}
+              ? 'Sign in to join the group.'
+              : 'Scheduling meetups for people who find it very hard.'}
           </p>
         </header>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col gap-5">
+        {/* Card */}
+        <div
+          className="bg-white rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.10)] p-6 flex flex-col gap-5"
+          style={{ fontFamily: 'var(--font-body)' }}
+        >
+          {/* Google */}
           <Button
             type="button"
             variant="secondary"
@@ -89,12 +104,14 @@ export function SignIn() {
             Continue with Google
           </Button>
 
+          {/* Divider */}
           <div className="flex items-center gap-3">
-            <hr className="flex-1 border-gray-200" />
-            <span className="text-xs text-gray-400 uppercase tracking-wide">or</span>
-            <hr className="flex-1 border-gray-200" />
+            <hr className="flex-1 border-[#E0E0E0]" />
+            <span className="text-[0.75rem] text-[#9E9E9E] uppercase tracking-wider">or</span>
+            <hr className="flex-1 border-[#E0E0E0]" />
           </div>
 
+          {/* Email form */}
           <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
             {mode === 'signup' && (
               <Input
@@ -126,21 +143,24 @@ export function SignIn() {
               required
             />
             {error && (
-              <p className="text-sm text-red-600" role="alert" aria-live="polite">
+              <p className="text-[0.8125rem] text-[#F44336]" role="alert" aria-live="polite">
                 {error}
               </p>
             )}
-            <Button type="submit" loading={loading} size="lg" className="w-full">
+            <Button type="submit" loading={loading} size="lg" className="w-full mt-1">
               {mode === 'signup' ? 'Create account' : 'Sign in'}
             </Button>
           </form>
 
+          {/* Toggle */}
           <button
             type="button"
             onClick={() => { setMode(m => m === 'signin' ? 'signup' : 'signin'); setError(null); }}
-            className="text-sm text-center text-indigo-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+            className="text-[0.875rem] text-center text-[#5C8348] hover:text-[#476834] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C8348] rounded-lg py-1 transition-colors"
           >
-            {mode === 'signin' ? "Don't have an account? Create one." : 'Already have an account? Sign in.'}
+            {mode === 'signin'
+              ? "Don't have an account? Create one."
+              : 'Already have an account? Sign in.'}
           </button>
         </div>
       </div>
