@@ -13,7 +13,7 @@ import { MeetupView } from './pages/MeetupView';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/meetup">
       <AuthProvider>
         <Routes>
           {/* Public routes */}
