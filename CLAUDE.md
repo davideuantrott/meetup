@@ -144,6 +144,20 @@ All tables have Row Level Security. Users can only access data for groups they b
 
 ---
 
+## Setup status (as of 2026-03-17)
+
+- [x] Dependencies installed (`npm install --legacy-peer-deps`)
+- [x] `.env` configured with Supabase URL, anon key, app URL, and VAPID public key
+- [x] Database migrations run in Supabase SQL Editor (001 + 002)
+- [x] Google OAuth configured (Google Cloud Console + Supabase Auth provider)
+- [x] Dev server running (`npm run dev`) — Google sign-in confirmed working
+- [ ] Edge Functions deployed (send-notification, send-nudges, send-invite)
+- [ ] Resend API key added to Supabase Edge Function secrets
+- [ ] VAPID private key added to Supabase Edge Function secrets
+- [ ] Nudge cron wired up (needs `pg_cron` on Pro, or external scheduler on free tier)
+
+---
+
 ## What's not built yet (from the spec)
 
 - OG image generation for WhatsApp preview cards (spec item 15)
