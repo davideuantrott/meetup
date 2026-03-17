@@ -1,0 +1,699 @@
+{
+  // ============================================================================
+  // SWIMMING PALS PLANNER — Design System (JSONC)
+  // ============================================================================
+  //
+  // Purpose:
+  //   Single source of truth for all visual design decisions in the Swimming
+  //   Pals Planner PWA. Feed this file to Claude Code via the frontend-designer
+  //   skill so every component, screen, and interaction is built from the same
+  //   visual language.
+  //
+  // Design inspiration:
+  //   A modern event-coordination mobile app with a light, airy feel. Soft sage
+  //   green tones, generous whitespace, bold typographic hierarchy mixing a light
+  //   display weight with heavy headings, and a single punchy accent colour
+  //   (chartreuse/lime) used sparingly for CTAs and active states. Cards are
+  //   softly rounded with subtle shadows. The overall mood is relaxed, social,
+  //   and friendly — not corporate, not childish.
+  //
+  // App context:
+  //   A lightweight PWA for coordinating one-off meetups with friends (swimming,
+  //   pub, day out). Users have lightweight accounts (name + phone/email). The
+  //   app supports group chat, date/time voting, location suggestions, RSVP,
+  //   and gentle nudge notifications. The group name (e.g. "Swimming Pals") is
+  //   configurable and appears in the PWA manifest, header, and share previews.
+  //   Tone: warm, casual, gently funny — like a group chat, not a booking system.
+  //
+  // ============================================================================
+
+
+  // --------------------------------------------------------------------------
+  // 1. COLOUR PALETTE
+  // --------------------------------------------------------------------------
+  "colors": {
+
+    // -- Core background tones (light, airy, sage-inflected) --
+    "background": {
+      "primary": "#FFFFFF",               // Main screen background
+      "secondary": "#F5F7F2",             // Subtle warm off-white for sections/cards
+      "tertiary": "#EBF0E6",             // Sage-tinted surface for grouped content
+      "elevated": "#FFFFFF"               // Elevated cards / modals / bottom sheets
+    },
+
+    // -- Sage green family (dominant brand colour) --
+    "sage": {
+      "50":  "#F2F5EE",                  // Lightest tint — chip backgrounds, tag fills
+      "100": "#E4EBDC",                  // Light — selected pill/tab background
+      "200": "#C8D6B9",                  // Medium-light — card tints, header bg
+      "300": "#A4BC91",                  // Medium — decorative borders, illustrations
+      "400": "#7FA06A",                  // Medium-dark — secondary text on light bg
+      "500": "#5C8348",                  // Core sage — headings, icons
+      "600": "#476834",                  // Dark — high-emphasis text on tinted bg
+      "700": "#334D24",                  // Darkest usable — footer, strong contrast
+      "900": "#1A2B12"                   // Near-black sage — use sparingly
+    },
+
+    // -- Accent: Chartreuse / Lime (the "pop" colour for CTAs) --
+    "accent": {
+      "primary": "#C8F542",             // Bright chartreuse — primary CTA fill, active nav icon
+      "hover": "#B8E035",               // Slightly deeper on hover/press
+      "muted": "#E8FAAB",              // Soft wash — notification badges, subtle highlights
+      "onAccent": "#1A1A1A"            // Text colour used ON the accent background
+    },
+
+    // -- Neutral / text tones --
+    "text": {
+      "primary": "#1A1A1A",             // Headings, bold labels — near-black
+      "secondary": "#6B6B6B",           // Supporting text, metadata, timestamps
+      "tertiary": "#9E9E9E",            // Placeholder text, disabled labels
+      "inverse": "#FFFFFF",             // Text on dark backgrounds (dark cards, accent)
+      "link": "#5C8348"                 // Inline links — uses sage-500
+    },
+
+    // -- Semantic / feedback colours --
+    "semantic": {
+      "success": "#4CAF50",             // Confirmed RSVP, successful action
+      "successLight": "#E8F5E9",        // Success background tint
+      "warning": "#FF9800",             // Pending, expiring soon
+      "warningLight": "#FFF3E0",        // Warning background tint
+      "error": "#F44336",               // Validation errors, destructive actions
+      "errorLight": "#FFEBEE",          // Error background tint
+      "info": "#5C8348",                // Informational — matches sage-500
+      "infoLight": "#F2F5EE"            // Info background tint
+    },
+
+    // -- Surface treatments --
+    "surface": {
+      "card": "#FFFFFF",                // Default card background
+      "cardTinted": "#F5F7F2",          // Tinted card (e.g. event card with sage wash)
+      "cardHighlight": "#EBF0E6",       // Highlighted / featured card
+      "overlay": "rgba(26, 26, 26, 0.5)", // Modal / bottom sheet overlay
+      "divider": "#E0E0E0",            // Subtle horizontal rules
+      "inputBorder": "#D0D0D0",         // Default input border
+      "inputBorderFocus": "#5C8348",    // Focused input border — sage
+      "inputBackground": "#FAFBF8"      // Input field fill
+    },
+
+    // -- Navigation bar --
+    "nav": {
+      "background": "#FFFFFF",           // Bottom nav background
+      "iconDefault": "#9E9E9E",          // Inactive nav icon
+      "iconActive": "#1A1A1A",           // Active nav icon (dark, not accent)
+      "activeIndicator": "#C8F542"       // Chartreuse ring/dot on active tab
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 2. TYPOGRAPHY
+  // --------------------------------------------------------------------------
+  //
+  // The inspiration uses a distinctive pairing: a thin/light display weight for
+  // secondary headings ("All Events") alongside a heavy/black weight for primary
+  // headings ("Have Today"). This contrast creates visual hierarchy without
+  // needing colour changes. We replicate this with a single variable font family
+  // that supports a wide weight range, paired with a clean geometric sans for
+  // body text.
+  //
+  // For the Swimming Pals Planner, the mood is casual and friendly, so we lean
+  // toward rounded or humanist geometrics rather than stark grotesks.
+  //
+  "typography": {
+
+    "fontFamilies": {
+      // Display / headings — a modern geometric sans with wide weight range.
+      // Nunito Sans has weights from 200–900, supports the light/bold contrast
+      // pattern seen in the inspiration, and feels warm without being childish.
+      "display": "'Nunito Sans', 'Segoe UI', sans-serif",
+
+      // Body / UI — clean and highly legible at small sizes.
+      // DM Sans pairs well, is slightly more neutral, and works for metadata,
+      // buttons, inputs, and long-form chat text.
+      "body": "'DM Sans', 'Segoe UI', sans-serif",
+
+      // Mono — for any code-like or data display (seat numbers, IDs)
+      "mono": "'JetBrains Mono', 'Courier New', monospace"
+    },
+
+    // Google Fonts import URL (use in <head> or @import)
+    "fontImport": "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400&display=swap",
+
+    // -- Type scale --
+    // Uses a modular scale. All sizes in rem (base 16px).
+    "scale": {
+      // Screen titles — the BIG bold line ("Have Today", "Events Today")
+      "displayLarge": {
+        "family": "display",
+        "size": "2rem",                  // 32px
+        "lineHeight": "1.15",
+        "weight": 800,                   // Extra-bold / black
+        "letterSpacing": "-0.02em"
+      },
+      // Secondary display — the lighter companion line ("All Events", "You Have 2")
+      "displaySmall": {
+        "family": "display",
+        "size": "1.75rem",               // 28px
+        "lineHeight": "1.2",
+        "weight": 300,                   // Light — creates the contrast
+        "letterSpacing": "-0.01em"
+      },
+      // Card titles — event names, meetup titles
+      "headingLarge": {
+        "family": "display",
+        "size": "1.375rem",              // 22px
+        "lineHeight": "1.25",
+        "weight": 700,
+        "letterSpacing": "-0.01em"
+      },
+      // Section headings ("Design Events", "Upcoming", "Chat")
+      "headingMedium": {
+        "family": "display",
+        "size": "1.125rem",              // 18px
+        "lineHeight": "1.3",
+        "weight": 600,
+        "letterSpacing": "0"
+      },
+      // Sub-headings, card metadata labels ("Date", "Time", "Venue")
+      "headingSmall": {
+        "family": "body",
+        "size": "0.8125rem",             // 13px
+        "lineHeight": "1.4",
+        "weight": 500,
+        "letterSpacing": "0.02em",
+        "textTransform": "none"          // NOT uppercase — keeps it casual
+      },
+      // Primary body text — chat messages, descriptions
+      "bodyLarge": {
+        "family": "body",
+        "size": "1rem",                  // 16px
+        "lineHeight": "1.5",
+        "weight": 400,
+        "letterSpacing": "0"
+      },
+      // Secondary body — supporting info, card descriptions
+      "bodyMedium": {
+        "family": "body",
+        "size": "0.875rem",              // 14px
+        "lineHeight": "1.45",
+        "weight": 400,
+        "letterSpacing": "0"
+      },
+      // Captions, timestamps, metadata values
+      "caption": {
+        "family": "body",
+        "size": "0.75rem",               // 12px
+        "lineHeight": "1.4",
+        "weight": 400,
+        "letterSpacing": "0.01em"
+      },
+      // Pill / chip / tag labels
+      "chip": {
+        "family": "body",
+        "size": "0.8125rem",             // 13px
+        "lineHeight": "1",
+        "weight": 500,
+        "letterSpacing": "0.01em"
+      },
+      // Button labels
+      "button": {
+        "family": "body",
+        "size": "0.9375rem",             // 15px
+        "lineHeight": "1",
+        "weight": 600,
+        "letterSpacing": "0.01em"
+      },
+      // Bottom nav labels (if shown)
+      "navLabel": {
+        "family": "body",
+        "size": "0.625rem",              // 10px
+        "lineHeight": "1",
+        "weight": 500,
+        "letterSpacing": "0.02em"
+      }
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 3. SPACING & LAYOUT
+  // --------------------------------------------------------------------------
+  "spacing": {
+    // Base unit: 4px. Use multiples for consistency.
+    "unit": 4,
+    "xs": 4,         // 4px  — tight inner padding (icon-to-text gap)
+    "sm": 8,         // 8px  — compact padding (chip padding, list item gap)
+    "md": 16,        // 16px — standard padding (card inner, section gap)
+    "lg": 24,        // 24px — generous padding (screen horizontal margins)
+    "xl": 32,        // 32px — section separation
+    "xxl": 48,       // 48px — major section breaks, top/bottom safe areas
+
+    // Screen-level
+    "screenPaddingHorizontal": 20,       // px — left/right content margin
+    "screenPaddingTop": 16,              // px — below status bar / header
+    "screenPaddingBottom": 24,           // px — above bottom nav
+
+    // Card-level
+    "cardPaddingHorizontal": 16,
+    "cardPaddingVertical": 16,
+    "cardGap": 12,                       // Gap between stacked cards
+
+    // Bottom nav
+    "navHeight": 64,                     // px — bottom navigation bar height
+    "navSafeAreaBottom": 34              // px — additional safe area (iPhone notch)
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 4. BORDER RADIUS
+  // --------------------------------------------------------------------------
+  //
+  // The inspiration uses generously rounded corners throughout — cards, pills,
+  // buttons, avatars. This gives the UI a soft, approachable feel that suits
+  // a social/friends app.
+  //
+  "borderRadius": {
+    "none": 0,
+    "sm": 8,          // Subtle rounding — inputs, small elements
+    "md": 12,         // Standard — buttons, small cards
+    "lg": 16,         // Cards, content containers
+    "xl": 20,         // Featured cards, modals
+    "xxl": 28,        // Bottom sheets, large panels
+    "pill": 9999,     // Fully rounded — pills, chips, tags, avatar frames
+    "circle": "50%"   // Circular — avatars, icon buttons, FABs
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 5. SHADOWS & ELEVATION
+  // --------------------------------------------------------------------------
+  //
+  // Light, soft shadows. No harsh drop shadows. The inspiration uses very subtle
+  // elevation to lift cards off the background without creating visual heaviness.
+  //
+  "shadows": {
+    "none": "none",
+    "xs": "0 1px 2px rgba(0, 0, 0, 0.04)",                          // Barely there — dividers
+    "sm": "0 2px 8px rgba(0, 0, 0, 0.06)",                           // Subtle lift — cards
+    "md": "0 4px 16px rgba(0, 0, 0, 0.08)",                          // Medium — elevated cards, FABs
+    "lg": "0 8px 32px rgba(0, 0, 0, 0.10)",                          // Strong — modals, bottom sheets
+    "xl": "0 16px 48px rgba(0, 0, 0, 0.14)",                         // Dramatic — overlays, toasts
+    "inner": "inset 0 1px 3px rgba(0, 0, 0, 0.06)",                  // Inset — input fields
+    "accentGlow": "0 4px 20px rgba(200, 245, 66, 0.35)"              // Chartreuse glow on CTA hover
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 6. COMPONENT TOKENS
+  // --------------------------------------------------------------------------
+  //
+  // Specific design tokens for key UI components in the Swimming Pals Planner.
+  // These map the generic palette to concrete usage.
+  //
+  "components": {
+
+    // -- Buttons --
+    "button": {
+      "primary": {
+        "background": "#C8F542",         // Chartreuse accent
+        "text": "#1A1A1A",
+        "borderRadius": 9999,            // Fully rounded pill shape
+        "paddingHorizontal": 24,
+        "paddingVertical": 14,
+        "shadow": "0 4px 20px rgba(200, 245, 66, 0.35)",
+        "hoverBackground": "#B8E035",
+        "activeScale": 0.97              // Slight press-down effect
+      },
+      "secondary": {
+        "background": "transparent",
+        "text": "#1A1A1A",
+        "border": "1.5px solid #D0D0D0",
+        "borderRadius": 9999,
+        "paddingHorizontal": 20,
+        "paddingVertical": 12,
+        "hoverBackground": "#F5F7F2"
+      },
+      "ghost": {
+        "background": "transparent",
+        "text": "#5C8348",               // Sage for ghost links
+        "borderRadius": 8,
+        "paddingHorizontal": 12,
+        "paddingVertical": 8,
+        "hoverBackground": "#F2F5EE"
+      },
+      "icon": {
+        "size": 44,                      // Minimum 44px touch target
+        "borderRadius": "50%",
+        "background": "#F5F7F2",
+        "hoverBackground": "#EBF0E6"
+      }
+    },
+
+    // -- Cards --
+    "card": {
+      "background": "#FFFFFF",
+      "borderRadius": 16,
+      "padding": 16,
+      "shadow": "0 2px 8px rgba(0, 0, 0, 0.06)",
+      "border": "none",
+      "hoverShadow": "0 4px 16px rgba(0, 0, 0, 0.08)",
+      // Featured/highlighted card variant (e.g. next upcoming meetup)
+      "featured": {
+        "background": "#EBF0E6",         // Sage tint
+        "borderRadius": 20,
+        "shadow": "0 4px 16px rgba(0, 0, 0, 0.08)"
+      }
+    },
+
+    // -- Pills / Chips / Filter tabs --
+    "chip": {
+      "default": {
+        "background": "transparent",
+        "text": "#1A1A1A",
+        "border": "1.5px solid #D0D0D0",
+        "borderRadius": 9999,
+        "paddingHorizontal": 16,
+        "paddingVertical": 8
+      },
+      "selected": {
+        "background": "#1A1A1A",          // Dark fill when selected (as in inspiration)
+        "text": "#FFFFFF",
+        "border": "1.5px solid #1A1A1A",
+        "borderRadius": 9999
+      },
+      "count": {
+        "background": "transparent",
+        "text": "#1A1A1A",
+        "border": "1.5px solid #D0D0D0",
+        "borderRadius": "50%",
+        "size": 40                        // Circular count badge
+      }
+    },
+
+    // -- Avatar / Profile images --
+    "avatar": {
+      "sizes": {
+        "xs": 24,                         // Tiny — stacked attendee row
+        "sm": 32,                         // Small — chat message sender
+        "md": 44,                         // Medium — list items
+        "lg": 56,                         // Large — profile header
+        "xl": 80                          // Extra large — onboarding / settings
+      },
+      "borderRadius": "50%",
+      "border": "2px solid #FFFFFF",       // White ring for stacked avatars
+      "stackOverlap": -8,                  // px overlap for avatar stacks
+      "overflowBadge": {
+        "background": "#C8F542",           // +N badge in chartreuse
+        "text": "#1A1A1A",
+        "size": 24,
+        "borderRadius": "50%"
+      }
+    },
+
+    // -- Bottom Navigation --
+    "bottomNav": {
+      "background": "#FFFFFF",
+      "height": 64,
+      "borderRadius": 28,                 // Rounded floating nav bar (as in inspiration)
+      "shadow": "0 -2px 16px rgba(0, 0, 0, 0.06)",
+      "iconSize": 24,
+      "activeIcon": {
+        "background": "#C8F542",          // Chartreuse circle behind active icon
+        "size": 44,
+        "borderRadius": "50%"
+      }
+    },
+
+    // -- Header / Top bar --
+    "header": {
+      "background": "transparent",         // Blends into screen background
+      "height": 56,
+      "iconSize": 24,
+      "backButton": {
+        "size": 40,
+        "borderRadius": "50%",
+        "background": "#F5F7F2"
+      },
+      "notificationBell": {
+        "size": 40,
+        "borderRadius": "50%",
+        "background": "#F5F7F2",
+        "badgeColor": "#F44336"            // Red dot for unread
+      }
+    },
+
+    // -- Input fields --
+    "input": {
+      "background": "#FAFBF8",
+      "border": "1.5px solid #D0D0D0",
+      "borderRadius": 12,
+      "paddingHorizontal": 16,
+      "paddingVertical": 14,
+      "focusBorder": "#5C8348",            // Sage on focus
+      "placeholderColor": "#9E9E9E",
+      "height": 48                         // Minimum height for touch targets
+    },
+
+    // -- Chat bubbles (for group discussion) --
+    "chat": {
+      "sent": {
+        "background": "#EBF0E6",           // Sage tint for own messages
+        "text": "#1A1A1A",
+        "borderRadius": "16px 16px 4px 16px"
+      },
+      "received": {
+        "background": "#F5F7F2",           // Lighter tint for others
+        "text": "#1A1A1A",
+        "borderRadius": "16px 16px 16px 4px"
+      },
+      "system": {
+        "background": "transparent",
+        "text": "#9E9E9E",
+        "textAlign": "center"              // "David created a meetup" style messages
+      }
+    },
+
+    // -- RSVP / Vote indicators --
+    "rsvp": {
+      "going": {
+        "background": "#E8F5E9",
+        "text": "#2E7D32",
+        "icon": "check-circle"
+      },
+      "maybe": {
+        "background": "#FFF3E0",
+        "text": "#E65100",
+        "icon": "help-circle"
+      },
+      "cantMake": {
+        "background": "#FFEBEE",
+        "text": "#C62828",
+        "icon": "x-circle"
+      },
+      "noResponse": {
+        "background": "#F5F5F5",
+        "text": "#9E9E9E",
+        "icon": "minus-circle"
+      }
+    },
+
+    // -- Date/time vote cards --
+    "dateVote": {
+      "background": "#FFFFFF",
+      "borderRadius": 12,
+      "border": "1.5px solid #E0E0E0",
+      "selectedBorder": "1.5px solid #5C8348",
+      "selectedBackground": "#F2F5EE",
+      "voteDot": {
+        "size": 8,
+        "going": "#4CAF50",
+        "maybe": "#FF9800",
+        "cantMake": "#F44336"
+      }
+    },
+
+    // -- Toast / Snackbar notifications --
+    "toast": {
+      "background": "#1A1A1A",
+      "text": "#FFFFFF",
+      "borderRadius": 12,
+      "shadow": "0 8px 32px rgba(0, 0, 0, 0.10)",
+      "accentStripe": "#C8F542"            // Thin chartreuse left border
+    },
+
+    // -- Bottom sheet --
+    "bottomSheet": {
+      "background": "#FFFFFF",
+      "borderRadius": "28px 28px 0 0",
+      "handle": {
+        "width": 40,
+        "height": 4,
+        "borderRadius": 2,
+        "background": "#D0D0D0"
+      },
+      "overlay": "rgba(26, 26, 26, 0.5)"
+    },
+
+    // -- Empty states --
+    "emptyState": {
+      "illustrationMaxWidth": 200,
+      "headingStyle": "headingMedium",
+      "bodyStyle": "bodyMedium",
+      "bodyColor": "#6B6B6B"
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 7. ANIMATION & MOTION
+  // --------------------------------------------------------------------------
+  //
+  // Light, purposeful motion. Nothing flashy — just enough to make interactions
+  // feel responsive and polished. Friends apps should feel alive, not static.
+  //
+  "motion": {
+    "duration": {
+      "instant": "100ms",                // Button press feedback
+      "fast": "200ms",                   // Chip selection, toggle, icon swap
+      "normal": "300ms",                 // Card transitions, page slides
+      "slow": "500ms",                   // Bottom sheet open/close, modals
+      "stagger": "50ms"                  // Delay between staggered list items
+    },
+    "easing": {
+      "default": "cubic-bezier(0.25, 0.1, 0.25, 1)",    // Smooth general purpose
+      "enter": "cubic-bezier(0, 0, 0.2, 1)",             // Elements entering view
+      "exit": "cubic-bezier(0.4, 0, 1, 1)",              // Elements leaving view
+      "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)"     // Playful bounce for CTAs
+    },
+    "interactions": {
+      "buttonPress": "scale(0.97)",                       // Subtle squish on tap
+      "cardHover": "translateY(-2px)",                    // Lift on hover (desktop)
+      "pageTransition": "slide-left 300ms ease",          // Screen-to-screen
+      "listItemEnter": "fadeIn 200ms ease + stagger 50ms" // List population
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 8. ICONOGRAPHY
+  // --------------------------------------------------------------------------
+  "icons": {
+    "library": "lucide-react",            // Consistent with React ecosystem
+    "defaultSize": 24,
+    "strokeWidth": 1.75,                  // Slightly lighter than default 2px
+    "sizes": {
+      "sm": 16,
+      "md": 20,
+      "lg": 24,
+      "xl": 28
+    },
+    // Key icons mapped to app concepts
+    "mapping": {
+      "home": "Home",
+      "search": "Search",
+      "calendar": "CalendarDays",
+      "profile": "User",
+      "notification": "Bell",
+      "back": "ChevronLeft",
+      "settings": "Settings",
+      "add": "Plus",
+      "send": "Send",
+      "vote": "ThumbsUp",
+      "location": "MapPin",
+      "time": "Clock",
+      "group": "Users",
+      "chat": "MessageCircle",
+      "rsvpGoing": "CheckCircle",
+      "rsvpMaybe": "HelpCircle",
+      "rsvpNo": "XCircle",
+      "share": "Share2",
+      "edit": "Pencil",
+      "delete": "Trash2",
+      "more": "MoreHorizontal",
+      "link": "ExternalLink",
+      "whatsapp": "MessageSquare"          // Placeholder — use WhatsApp SVG if available
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 9. PWA & BRANDING
+  // --------------------------------------------------------------------------
+  //
+  // The group name is configurable and used as the app name. These are defaults
+  // that should be overridden per-group in settings.
+  //
+  "pwa": {
+    "defaultName": "Swimming Pals",
+    "shortName": "SwimPals",
+    "themeColor": "#F5F7F2",             // Status bar colour — sage-tinted white
+    "backgroundColor": "#FFFFFF",         // Splash screen background
+    "display": "standalone",
+    "orientation": "portrait",
+    "iconSizes": [192, 512],
+    "appleTouchIcon": 180
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 10. RESPONSIVE BREAKPOINTS
+  // --------------------------------------------------------------------------
+  //
+  // Mobile-first PWA. Desktop is a secondary concern but should degrade
+  // gracefully into a centred card layout.
+  //
+  "breakpoints": {
+    "mobile": 0,                          // 0–479px — primary target
+    "mobileLarge": 480,                   // 480–767px — large phones, small tablets
+    "tablet": 768,                        // 768–1023px — tablet / landscape phone
+    "desktop": 1024,                      // 1024px+ — desktop fallback
+    "maxContentWidth": 480               // px — max width of content area on large screens
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 11. ACCESSIBILITY
+  // --------------------------------------------------------------------------
+  "accessibility": {
+    "minTouchTarget": 44,                 // px — minimum tappable area (WCAG 2.5.8)
+    "focusRing": {
+      "color": "#5C8348",                // Sage — visible on both light and dark
+      "width": 2,
+      "offset": 2,
+      "style": "solid"
+    },
+    "contrastRequirements": {
+      "normalText": 4.5,                 // WCAG AA minimum for body text
+      "largeText": 3,                    // WCAG AA minimum for headings 18px+
+      "uiComponents": 3                  // WCAG AA minimum for borders, icons
+    },
+    "reducedMotion": {
+      "strategy": "remove-animation",     // Respect prefers-reduced-motion
+      "preserveLayout": true              // Keep layout shifts, remove decorative motion
+    }
+  },
+
+
+  // --------------------------------------------------------------------------
+  // 12. DESIGN PRINCIPLES (for Claude Code reference)
+  // --------------------------------------------------------------------------
+  //
+  // These are qualitative guardrails for the AI to follow when making design
+  // decisions not explicitly covered by tokens above.
+  //
+  "principles": [
+    "Casual over corporate — this is a group of friends, not a workplace",
+    "Light and airy — generous whitespace, soft shadows, no visual clutter",
+    "Bold typographic hierarchy — use weight contrast (light 300 vs black 800) not just size",
+    "One accent colour only — chartreuse for primary CTAs and active states, nowhere else",
+    "Rounded everything — pills, cards, avatars, buttons — nothing sharp",
+    "Sage green is the brand, not just a colour — it should feel like the app's personality",
+    "Warm neutrals, not cool greys — off-whites lean slightly green, not blue",
+    "Touch-first — every interactive element meets 44px minimum",
+    "Subtle motion — enough to feel alive, not enough to distract",
+    "Chat-like communication — the app should feel as easy as texting a group chat",
+    "No feature bloat in the UI — show what matters now, hide the rest behind taps",
+    "Avatars and people > abstract icons — make it feel social and personal",
+    "Nudges, not nags — the tone of any notification or prompt should be gentle and funny"
+  ]
+}
