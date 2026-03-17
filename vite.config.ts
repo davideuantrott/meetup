@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  base: '/meetup/',
   plugins: [
     react(),
     tailwindcss(),
@@ -19,7 +20,7 @@ export default defineConfig({
         theme_color: '#F5F7F2',
         background_color: '#FFFFFF',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/meetup/',
         icons: [
           {
             src: '/icons/icon-192.png',
