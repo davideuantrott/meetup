@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Meetup, ProposedSlot, Availability, Reaction } from '../types';
 
@@ -7,10 +7,13 @@ export function useMeetup(meetupId: string | undefined) {
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const initialLoadDone = useRef(false);
 
   const fetchMeetup = useCallback(async () => {
     if (!meetupId) return;
-    setLoading(true);
+    // Only show the full-page spinner on the very first load.
+    // Background re-fetches (from Realtime) silently update state.
+    if (!initialLoadDone.current) setLoading(true);
     setError(null);
     try {
       const [{ data: meetupData }, { data: reactionsData }] = await Promise.all([
@@ -39,6 +42,7 @@ export function useMeetup(meetupId: string | undefined) {
     } catch {
       setError('Failed to load meetup');
     } finally {
+      initialLoadDone.current = true;
       setLoading(false);
     }
   }, [meetupId]);
