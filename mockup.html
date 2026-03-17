@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swimming Pals Planner — Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;1,6..12,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-display: 'Nunito Sans', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --sage-50:  #F2F5EE;
+      --sage-100: #E4EBDC;
+      --sage-200: #C8D6B9;
+      --sage-300: #A4BC91;
+      --sage-400: #7FA06A;
+      --sage-500: #5C8348;
+      --sage-600: #476834;
+      --sage-700: #334D24;
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F5F7F2;
+      --bg-tertiary: #EBF0E6;
+      --accent: #C8F542;
+      --accent-hover: #B8E035;
+      --accent-muted: #E8FAAB;
+      --on-accent: #1A1A1A;
+      --text-primary: #1A1A1A;
+      --text-secondary: #6B6B6B;
+      --text-tertiary: #9E9E9E;
+      --divider: #E0E0E0;
+      --input-bg: #FAFBF8;
+      --input-border: #D0D0D0;
+      --success: #4CAF50;
+      --success-light: #E8F5E9;
+      --success-dark: #2E7D32;
+      --warning: #FF9800;
+      --warning-light: #FFF3E0;
+      --warning-dark: #E65100;
+      --error: #F44336;
+      --error-light: #FFEBEE;
+      --error-dark: #C62828;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+      --shadow-accent: 0 4px 20px rgba(200,245,66,0.35);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: #E8EBE4;
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── DEMO CHROME ─────────────────────────────────────────── */
+    .demo-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--text-primary);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+    }
+    .demo-bar span {
+      color: var(--accent);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+    .demo-btn {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1.5px solid #333;
+      background: transparent;
+      color: #999;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 150ms;
+    }
+    .demo-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--on-accent);
+    }
+    .demo-btn:hover:not(.active) { border-color: #555; color: #ccc; }
+
+    /* ── PHONE FRAME ─────────────────────────────────────────── */
+    .stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 80px 20px 40px;
+      min-height: 100vh;
+    }
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: var(--bg-secondary);
+      border-radius: 48px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.25), 0 0 0 8px #1A1A1A, 0 0 0 10px #2a2a2a;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Notch */
+    .phone::before {
+      content: '';
+      position: absolute;
+      top: 12px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 34px;
+      background: #1A1A1A;
+      border-radius: 20px;
+      z-index: 100;
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-top: 58px; /* below notch */
+    }
+    .screen.active { display: flex; }
+
+    /* ── SHARED STYLES ────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 600;
+      background: var(--accent);
+      color: var(--on-accent);
+      border: none; border-radius: 9999px;
+      padding: 14px 24px;
+      min-height: 52px;
+      cursor: pointer;
+      box-shadow: var(--shadow-accent);
+      transition: all 150ms;
+      width: 100%;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-body);
+      font-size: 15px; font-weight: 600;
+      background: transparent;
+      color: var(--text-primary);
+      border: 1.5px solid var(--input-border);
+      border-radius: 9999px;
+      padding: 12px 20px;
+      min-height: 48px;
+      cursor: pointer;
+      transition: all 150ms;
+      flex: 1;
+    }
+    .btn-secondary:hover { background: var(--bg-secondary); }
+    .btn-secondary:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      font-family: var(--font-body);
+      font-size: 13px; font-weight: 500;
+      background: transparent; border: none;
+      color: var(--sage-500);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+    .btn-ghost:hover { background: var(--sage-50); }
+
+    .card {
+      background: var(--bg-primary);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    .card-featured {
+      background: var(--bg-tertiary);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--text-primary);
+      outline: none;
+      min-height: 48px;
+      transition: border-color 150ms;
+    }
+    .input-field:focus { border-color: var(--sage-500); }
+    .input-label {
+      font-size: 13px; font-weight: 500;
+      color: var(--text-primary);
+      display: block; margin-bottom: 6px;
+    }
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .section-label {
+      font-size: 11px; font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .chip {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-body);
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 9999px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .chip-accent { background: var(--accent); color: var(--on-accent); }
+    .chip-sage   { background: var(--sage-50); color: var(--sage-500); }
+    .chip-green  { background: var(--success-light); color: var(--success-dark); }
+    .chip-red    { background: var(--error-light); color: var(--error-dark); }
+    .chip-grey   { background: #F5F5F5; color: var(--text-tertiary); }
+
+    .avatar {
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-body);
+      font-weight: 700; color: white;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+    .avatar-ring-yes  { box-shadow: 0 0 0 2.5px #fff, 0 0 0 5px #4CAF50; }
+    .avatar-ring-maybe{ box-shadow: 0 0 0 2.5px #fff, 0 0 0 5px #FF9800; opacity:.85; }
+    .avatar-ring-no   { filter: grayscale(1); opacity:.55; }
+    .avatar-pending   { filter: grayscale(.6); opacity:.5; }
+
+    /* ── SCREEN 1: SIGN IN ────────────────────────────────────── */
+    #screen-signin {
+      background: linear-gradient(160deg, #F2F5EE 0%, #EBF0E6 50%, #F5F7F2 100%);
+      padding: 20px;
+      padding-top: 68px;
+      gap: 28px;
+    }
+
+    .signin-brand { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+    .signin-logo {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: var(--shadow-accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .signin-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 32px; line-height: 1.1; letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+    .signin-sub {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: 22px; line-height: 1.2; letter-spacing: -0.01em;
+      color: var(--text-secondary);
+    }
+    .signin-tagline { font-size: 14px; color: var(--text-secondary); margin-top: -4px; }
+
+    .signin-card {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: transparent; border: 1.5px solid var(--input-border);
+      border-radius: 9999px; padding: 14px 20px;
+      font-family: var(--font-body); font-size: 15px; font-weight: 600;
+      color: var(--text-primary); cursor: pointer; min-height: 52px;
+      transition: all 150ms; width: 100%;
+    }
+    .google-btn:hover { background: var(--bg-secondary); }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      color: var(--text-tertiary); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--divider);
+    }
+
+    /* ── SCREEN 2: HOME ───────────────────────────────────────── */
+    #screen-home { background: var(--bg-secondary); padding-bottom: 32px; }
+
+    .home-header {
+      padding: 16px 20px 8px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .home-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 32px; line-height: 1.1; letter-spacing: -0.02em;
+    }
+    .home-sub {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: 22px; line-height: 1.2; letter-spacing: -0.01em;
+      color: var(--text-secondary); margin-top: 2px;
+    }
+    .home-header-actions { display: flex; gap: 8px; padding-top: 4px; }
+    .icon-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg-tertiary); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; transition: all 150ms;
+    }
+    .icon-btn:hover { background: var(--sage-200); }
+
+    .fab {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 20px; font-weight: 300;
+      box-shadow: var(--shadow-accent); transition: all 150ms;
+      color: var(--on-accent); line-height: 1;
+    }
+    .fab:hover { background: var(--accent-hover); }
+    .fab:active { transform: scale(0.95); }
+
+    .member-strip {
+      padding: 8px 20px 12px;
+      display: flex; gap: 12px; overflow-x: auto;
+    }
+    .member-strip::-webkit-scrollbar { display: none; }
+    .member-chip { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+    .member-name { font-size: 10px; color: var(--text-tertiary); font-weight: 500; }
+
+    .home-section { padding: 0 20px; display: flex; flex-direction: column; gap: 12px; }
+    .home-section-header { display: flex; align-items: center; justify-content: space-between; }
+
+    .meetup-card {
+      background: var(--bg-primary);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: box-shadow 150ms;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .meetup-card:hover { box-shadow: var(--shadow-md); }
+    .meetup-card.featured { background: var(--bg-tertiary); border-radius: 24px; box-shadow: var(--shadow-md); }
+
+    .meetup-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .meetup-title {
+      font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      line-height: 1.25; color: var(--text-primary);
+    }
+    .meetup-meta { font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+    .meetup-footer { display: flex; align-items: center; justify-content: space-between; }
+    .progress-dots { display: flex; gap: 4px; align-items: center; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .dot.filled { background: var(--sage-500); }
+    .dot.empty { background: var(--divider); }
+    .your-turn {
+      font-size: 11px; font-weight: 600; color: var(--sage-500);
+      background: var(--sage-50); padding: 4px 10px; border-radius: 9999px;
+    }
+    .confirmed-row { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+    .confirmed-date-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent); color: var(--on-accent);
+      font-size: 12px; font-weight: 700;
+      padding: 5px 12px; border-radius: 9999px;
+    }
+    .countdown-text { font-size: 12px; color: var(--text-secondary); }
+
+    /* ── SCREEN 3: MEETUP VIEW ────────────────────────────────── */
+    #screen-meetup { background: var(--bg-secondary); padding-bottom: 32px; }
+
+    .meetup-view-header {
+      padding: 12px 20px 8px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .back-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-secondary); border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; color: var(--text-secondary);
+      transition: all 150ms; flex-shrink: 0;
+    }
+    .back-btn:hover { background: var(--bg-tertiary); }
+    .meetup-view-title {
+      flex: 1; min-width: 0;
+      font-family: var(--font-display); font-size: 20px; font-weight: 700;
+      letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .commentary-card {
+      margin: 4px 20px;
+      background: white; border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      font-size: 14px; font-style: italic; color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .avatar-row { padding: 12px 20px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .avatar-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .avatar-group-name { font-size: 10px; color: var(--text-tertiary); font-weight: 500; }
+
+    .carousel-section { padding: 0 20px; }
+    .carousel {
+      display: flex; gap: 16px;
+      overflow-x: auto; padding-bottom: 8px;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+
+    .slot-card {
+      flex-shrink: 0; width: 240px;
+      border-radius: 20px; padding: 16px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .slot-card.normal { background: white; box-shadow: var(--shadow-sm); }
+    .slot-card.best   { background: var(--bg-tertiary); box-shadow: var(--shadow-md); }
+
+    .slot-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .slot-date {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 20px; line-height: 1.1; letter-spacing: -0.01em;
+    }
+    .slot-time { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+
+    .vote-bar { height: 6px; border-radius: 9999px; overflow: hidden; display: flex; gap: 2px; }
+    .vote-bar-yes   { background: var(--success); border-radius: 9999px; }
+    .vote-bar-maybe { background: var(--warning); border-radius: 9999px; }
+    .vote-bar-no    { background: var(--error); border-radius: 9999px; }
+
+    .respondent-row { display: flex; align-items: center; gap: 8px; }
+    .respondent-label {
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 9999px;
+      text-transform: uppercase; letter-spacing: 0.03em; flex-shrink: 0; min-width: 44px; text-align: center;
+    }
+    .label-yes   { background: var(--success-light); color: var(--success-dark); }
+    .label-maybe { background: var(--warning-light); color: var(--warning-dark); }
+    .label-no    { background: var(--error-light); color: var(--error-dark); }
+    .label-none  { background: #F5F5F5; color: var(--text-tertiary); }
+    .respondent-avatars { display: flex; gap: 4px; }
+
+    .rsvp-buttons { display: flex; gap: 8px; margin-top: auto; }
+    .rsvp-btn {
+      flex: 1; padding: 10px 4px;
+      border-radius: 9999px; border: none;
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      cursor: pointer; min-height: 44px;
+      transition: all 150ms;
+    }
+    .rsvp-btn:active { transform: scale(0.97); }
+    .rsvp-yes-active   { background: var(--success); color: white; }
+    .rsvp-yes-idle     { background: var(--success-light); color: var(--success-dark); }
+    .rsvp-maybe-active { background: var(--warning); color: white; }
+    .rsvp-maybe-idle   { background: var(--warning-light); color: var(--warning-dark); }
+    .rsvp-no-active    { background: var(--error); color: white; }
+    .rsvp-no-idle      { background: var(--error-light); color: var(--error-dark); }
+
+    .slot-tally { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; }
+    .tally-yes   { color: var(--success-dark); }
+    .tally-maybe { color: var(--warning-dark); }
+    .tally-no    { color: var(--error-dark); }
+
+    .creator-controls { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+    .creator-row { display: flex; gap: 10px; }
+
+    .reactions-section { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+    .reaction-feed { display: flex; flex-direction: column; gap: 10px; }
+    .reaction-item { display: flex; align-items: flex-start; gap: 10px; }
+    .reaction-bubble {
+      background: var(--bg-tertiary);
+      border-radius: 12px 12px 12px 4px;
+      padding: 8px 12px;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .reaction-text { font-size: 14px; color: var(--text-primary); }
+    .reaction-meta { font-size: 11px; color: var(--text-tertiary); }
+    .reaction-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .reaction-chips::-webkit-scrollbar { display: none; }
+    .reaction-chip {
+      flex-shrink: 0; padding: 10px 16px; border-radius: 9999px;
+      border: 1.5px solid var(--input-border);
+      background: white; color: var(--text-primary);
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      cursor: pointer; min-height: 44px; white-space: nowrap;
+      transition: all 150ms;
+    }
+    .reaction-chip:hover { border-color: var(--sage-300); background: var(--sage-50); }
+
+    /* ── SCREEN 4: CONFIRMED ──────────────────────────────────── */
+    #screen-confirmed { background: var(--bg-secondary); padding-bottom: 32px; }
+
+    .confirmed-hero {
+      margin: 4px 20px;
+      background: var(--bg-tertiary);
+      border-radius: 24px; padding: 24px;
+      box-shadow: var(--shadow-md);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .confirmed-big-date {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: 32px; line-height: 1.1; letter-spacing: -0.02em;
+    }
+    .confirmed-big-time {
+      font-family: var(--font-display); font-weight: 300;
+      font-size: 22px; line-height: 1.2; letter-spacing: -0.01em;
+      color: var(--text-secondary); margin-top: 2px;
+    }
+    .confirmed-location { font-size: 14px; color: var(--sage-600); display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .countdown-row { display: flex; align-items: center; gap: 8px; }
+    .countdown-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .countdown-label { font-size: 14px; font-weight: 600; color: var(--sage-500); }
+    .confirmed-commentary { font-size: 14px; font-style: italic; color: var(--text-secondary); }
+
+    .attendees-section { padding: 0 20px; display: flex; flex-direction: column; gap: 12px; }
+    .attendees-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .attendee-chip { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .attendee-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); }
+
+    .action-row { padding: 0 20px; display: flex; gap: 12px; }
+
+    /* ── SPACERS ─────────────────────────────────────────────── */
+    .spacer-sm { height: 8px; }
+    .spacer-md { height: 16px; }
+    .spacer-lg { height: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- Demo navigation bar -->
+<div class="demo-bar">
+  <span>🏊 Mockup</span>
+  <button class="demo-btn active" onclick="showScreen('signin')">Sign in</button>
+  <button class="demo-btn" onclick="showScreen('home')">Home</button>
+  <button class="demo-btn" onclick="showScreen('meetup')">Meetup</button>
+  <button class="demo-btn" onclick="showScreen('confirmed')">Confirmed</button>
+</div>
+
+<div class="stage">
+  <div class="phone">
+
+    <!-- ══════════════════════════════════════════════════════
+         SCREEN 1 — SIGN IN
+    ══════════════════════════════════════════════════════ -->
+    <div class="screen active" id="screen-signin">
+
+      <div class="signin-brand">
+        <div class="signin-logo">🏊</div>
+        <div>
+          <div class="signin-title">Swimming Pals</div>
+          <div class="signin-sub">Planner</div>
+        </div>
+        <div class="signin-tagline">Scheduling meetups for people who find it very hard.</div>
+      </div>
+
+      <div class="signin-card">
+        <button class="google-btn">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.5 30.2 0 24 0 14.6 0 6.6 5.5 2.9 13.5l7.9 6.1C12.6 13.2 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.5-.1-3-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.2 7-17.1z"/><path fill="#FBBC05" d="M10.8 28.4c-.6-1.6-.9-3.3-.9-5s.3-3.4.9-5L2.9 12.3C1 16.1 0 20.4 0 24s1 7.9 2.9 11.7l7.9-7.3z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.1-5.5l-7.6-5.9c-2.1 1.4-4.7 2.2-7.5 2.2-6.2 0-11.4-4-13.2-9.4l-7.9 7.3C6.6 42.5 14.6 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">or</div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <input class="input-field" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input class="input-field" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn-primary" onclick="showScreen('home')" style="margin-top:4px;">Sign in</button>
+        </div>
+
+        <button class="btn-ghost" style="align-self:center;font-size:14px;color:var(--sage-500);">
+          Don't have an account? Create one.
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         SCREEN 2 — HOME
+    ══════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-home">
+
+      <div class="home-header">
+        <div>
+          <div class="home-title">Swimming Pals</div>
+          <div class="home-sub">3 active meetups</div>
+        </div>
+        <div class="home-header-actions">
+          <button class="icon-btn" title="Invite">👤</button>
+          <div class="icon-btn" style="padding:0;overflow:hidden;">
+            <div class="avatar" style="width:44px;height:44px;background:#5C8348;font-size:16px;">D</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member strip -->
+      <div class="member-strip">
+        <div class="member-chip">
+          <div class="avatar avatar-ring-yes" style="width:32px;height:32px;background:#5C8348;font-size:12px;">D</div>
+          <span class="member-name">David</span>
+        </div>
+        <div class="member-chip">
+          <div class="avatar avatar-ring-yes" style="width:32px;height:32px;background:#EC4899;font-size:12px;">S</div>
+          <span class="member-name">Sarah</span>
+        </div>
+        <div class="member-chip">
+          <div class="avatar avatar-ring-maybe" style="width:32px;height:32px;background:#F59E0B;font-size:12px;">M</div>
+          <span class="member-name">Marcus</span>
+        </div>
+        <div class="member-chip">
+          <div class="avatar avatar-pending" style="width:32px;height:32px;background:#3B82F6;font-size:12px;">J</div>
+          <span class="member-name">Jess</span>
+        </div>
+        <div class="member-chip">
+          <div class="avatar avatar-ring-no" style="width:32px;height:32px;background:#8B5CF6;font-size:12px;">T</div>
+          <span class="member-name">Tom</span>
+        </div>
+      </div>
+
+      <div class="home-section">
+        <div class="home-section-header">
+          <span class="section-label">Active</span>
+          <button class="fab" onclick="showScreen('meetup')" title="New meetup" style="font-size:22px;font-weight:300;">+</button>
+        </div>
+
+        <!-- Confirmed meetup -->
+        <div class="meetup-card featured" onclick="showScreen('confirmed')">
+          <div class="meetup-card-header">
+            <span class="meetup-title">Pub garden session</span>
+            <span class="chip chip-accent">Confirmed</span>
+          </div>
+          <div class="meetup-meta">📍 The Crown, Hackney</div>
+          <div class="confirmed-row">
+            <div class="confirmed-date-chip">🕕 Sat 29 Mar</div>
+            <span class="countdown-text">12 days away</span>
+          </div>
+        </div>
+
+        <!-- Open meetup — needs response -->
+        <div class="meetup-card" onclick="showScreen('meetup')">
+          <div class="meetup-card-header">
+            <span class="meetup-title">Curry night, if anyone can agree</span>
+            <span class="chip chip-sage">Open</span>
+          </div>
+          <div class="meetup-footer">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="progress-dots">
+                <div class="dot filled"></div>
+                <div class="dot filled"></div>
+                <div class="dot filled"></div>
+                <div class="dot empty"></div>
+                <div class="dot empty"></div>
+              </div>
+              <span style="font-size:12px;color:var(--text-secondary);">3 of 5</span>
+            </div>
+            <span class="your-turn">Your turn</span>
+          </div>
+        </div>
+
+        <!-- Open meetup — responded -->
+        <div class="meetup-card">
+          <div class="meetup-card-header">
+            <span class="meetup-title">Outdoor swim, weather dependent</span>
+            <span class="chip chip-sage">Open</span>
+          </div>
+          <div class="meetup-footer">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="progress-dots">
+                <div class="dot filled"></div>
+                <div class="dot filled"></div>
+                <div class="dot empty"></div>
+                <div class="dot empty"></div>
+                <div class="dot empty"></div>
+              </div>
+              <span style="font-size:12px;color:var(--text-secondary);">2 of 5</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <!-- Archive toggle -->
+      <div style="padding:0 20px;">
+        <button class="btn-ghost" style="font-size:12px;color:var(--text-tertiary);">
+          ↓ Archive (4)
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         SCREEN 3 — MEETUP VIEW
+    ══════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-meetup">
+
+      <div class="meetup-view-header">
+        <button class="back-btn" onclick="showScreen('home')">←</button>
+        <div style="flex:1;min-width:0;">
+          <div class="meetup-view-title">Curry night, if anyone can agree</div>
+          <div style="font-size:12px;color:var(--text-secondary);">TBD</div>
+        </div>
+        <button class="back-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
+      </div>
+
+      <!-- Commentary -->
+      <div class="commentary-card">
+        Marcus says maybe, which as we all know means no.
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <!-- Avatar row -->
+      <div class="avatar-row">
+        <div class="avatar-group">
+          <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#5C8348;font-size:16px;">D</div>
+          <span class="avatar-group-name">David</span>
+        </div>
+        <div class="avatar-group">
+          <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#EC4899;font-size:16px;">S</div>
+          <span class="avatar-group-name">Sarah</span>
+        </div>
+        <div class="avatar-group">
+          <div class="avatar avatar-ring-maybe" style="width:44px;height:44px;background:#F59E0B;font-size:16px;">M</div>
+          <span class="avatar-group-name">Marcus</span>
+        </div>
+        <div class="avatar-group">
+          <div class="avatar avatar-pending" style="width:44px;height:44px;background:#3B82F6;font-size:16px;">J</div>
+          <span class="avatar-group-name">Jess</span>
+        </div>
+        <div class="avatar-group">
+          <div class="avatar avatar-pending" style="width:44px;height:44px;background:#8B5CF6;font-size:16px;">T</div>
+          <span class="avatar-group-name">Tom</span>
+        </div>
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <!-- Date carousel -->
+      <div class="carousel-section">
+        <div class="carousel">
+
+          <!-- Slot 1 — Best -->
+          <div class="slot-card best">
+            <div class="slot-header">
+              <div>
+                <div class="slot-date">Fri 4 Apr</div>
+                <div class="slot-time">Evening</div>
+              </div>
+              <span class="chip chip-accent" style="font-size:10px;padding:3px 9px;align-self:flex-start;">Best</span>
+            </div>
+
+            <div class="vote-bar">
+              <div class="vote-bar-yes" style="flex:2;"></div>
+              <div class="vote-bar-maybe" style="flex:1;"></div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="respondent-row">
+                <span class="respondent-label label-yes">Yes</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-ring-yes" style="width:24px;height:24px;background:#5C8348;font-size:9px;">D</div>
+                  <div class="avatar avatar-ring-yes" style="width:24px;height:24px;background:#EC4899;font-size:9px;">S</div>
+                </div>
+              </div>
+              <div class="respondent-row">
+                <span class="respondent-label label-maybe">Maybe</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-ring-maybe" style="width:24px;height:24px;background:#F59E0B;font-size:9px;">M</div>
+                </div>
+              </div>
+              <div class="respondent-row">
+                <span class="respondent-label label-none">—</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#3B82F6;font-size:9px;">J</div>
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#8B5CF6;font-size:9px;">T</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rsvp-buttons">
+              <button class="rsvp-btn rsvp-yes-active" onclick="toggleRsvp(this,'yes')">Yes</button>
+              <button class="rsvp-btn rsvp-maybe-idle" onclick="toggleRsvp(this,'maybe')">Maybe</button>
+              <button class="rsvp-btn rsvp-no-idle" onclick="toggleRsvp(this,'no')">No</button>
+            </div>
+
+            <div class="slot-tally">
+              <span class="tally-yes">2 yes</span>
+              <span class="tally-maybe">1 maybe</span>
+              <span class="tally-no">0 no</span>
+            </div>
+          </div>
+
+          <!-- Slot 2 -->
+          <div class="slot-card normal">
+            <div class="slot-header">
+              <div>
+                <div class="slot-date">Sat 5 Apr</div>
+                <div class="slot-time">19:00</div>
+              </div>
+            </div>
+
+            <div class="vote-bar">
+              <div class="vote-bar-yes" style="flex:1;"></div>
+              <div class="vote-bar-no" style="flex:1;"></div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="respondent-row">
+                <span class="respondent-label label-yes">Yes</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-ring-yes" style="width:24px;height:24px;background:#EC4899;font-size:9px;">S</div>
+                </div>
+              </div>
+              <div class="respondent-row">
+                <span class="respondent-label label-no">No</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-ring-no" style="width:24px;height:24px;background:#5C8348;font-size:9px;">D</div>
+                </div>
+              </div>
+              <div class="respondent-row">
+                <span class="respondent-label label-none">—</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#F59E0B;font-size:9px;">M</div>
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#3B82F6;font-size:9px;">J</div>
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#8B5CF6;font-size:9px;">T</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rsvp-buttons">
+              <button class="rsvp-btn rsvp-yes-idle" onclick="toggleRsvp(this,'yes')">Yes</button>
+              <button class="rsvp-btn rsvp-maybe-idle" onclick="toggleRsvp(this,'maybe')">Maybe</button>
+              <button class="rsvp-btn rsvp-no-active" onclick="toggleRsvp(this,'no')">No</button>
+            </div>
+
+            <div class="slot-tally">
+              <span class="tally-yes">1 yes</span>
+              <span class="tally-maybe">0 maybe</span>
+              <span class="tally-no">1 no</span>
+            </div>
+          </div>
+
+          <!-- Slot 3 -->
+          <div class="slot-card normal">
+            <div class="slot-header">
+              <div>
+                <div class="slot-date">Sun 6 Apr</div>
+                <div class="slot-time">Afternoon</div>
+              </div>
+            </div>
+            <div class="vote-bar" style="background:#E0E0E0;height:6px;border-radius:9999px;"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="respondent-row">
+                <span class="respondent-label label-none">—</span>
+                <div class="respondent-avatars">
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#5C8348;font-size:9px;">D</div>
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#EC4899;font-size:9px;">S</div>
+                  <div class="avatar avatar-pending" style="width:24px;height:24px;background:#F59E0B;font-size:9px;">M</div>
+                </div>
+              </div>
+            </div>
+            <div class="rsvp-buttons">
+              <button class="rsvp-btn rsvp-yes-idle" onclick="toggleRsvp(this,'yes')">Yes</button>
+              <button class="rsvp-btn rsvp-maybe-idle" onclick="toggleRsvp(this,'maybe')">Maybe</button>
+              <button class="rsvp-btn rsvp-no-idle" onclick="toggleRsvp(this,'no')">No</button>
+            </div>
+            <div class="slot-tally">
+              <span class="tally-yes">0 yes</span>
+              <span class="tally-maybe">0 maybe</span>
+              <span class="tally-no">0 no</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <!-- Creator controls -->
+      <div class="creator-controls">
+        <button class="btn-primary" onclick="showScreen('confirmed')">
+          ✓ Confirm Fri 4 Apr
+        </button>
+        <div class="creator-row">
+          <button class="btn-secondary" style="font-size:13px;">+ Add date</button>
+          <button class="btn-secondary" style="font-size:13px;color:var(--error);border-color:var(--error-light);">✕ Cancel meetup</button>
+        </div>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <!-- Reactions -->
+      <div class="reactions-section">
+        <span class="section-label">Quick reactions</span>
+        <div class="reaction-feed">
+          <div class="reaction-item">
+            <div class="avatar" style="width:24px;height:24px;background:#EC4899;font-size:9px;flex-shrink:0;">S</div>
+            <div class="reaction-bubble">
+              <span class="reaction-text">Works for me</span>
+              <span class="reaction-meta">Sarah · 14:32</span>
+            </div>
+          </div>
+          <div class="reaction-item">
+            <div class="avatar" style="width:24px;height:24px;background:#F59E0B;font-size:9px;flex-shrink:0;">M</div>
+            <div class="reaction-bubble">
+              <span class="reaction-text">Can we do earlier?</span>
+              <span class="reaction-meta">Marcus · 15:01</span>
+            </div>
+          </div>
+        </div>
+        <div class="reaction-chips">
+          <button class="reaction-chip">Works for me</button>
+          <button class="reaction-chip">Can we do later?</button>
+          <button class="reaction-chip">Can we do earlier?</button>
+          <button class="reaction-chip">I'll sort it</button>
+          <button class="reaction-chip">Running late (already)</button>
+        </div>
+      </div>
+
+      <div class="spacer-lg"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════
+         SCREEN 4 — CONFIRMED MEETUP
+    ══════════════════════════════════════════════════════ -->
+    <div class="screen" id="screen-confirmed">
+
+      <div class="meetup-view-header">
+        <button class="back-btn" onclick="showScreen('home')">←</button>
+        <div class="meetup-view-title">Pub garden session</div>
+      </div>
+
+      <!-- Hero card -->
+      <div class="confirmed-hero">
+        <span class="chip chip-accent" style="align-self:flex-start;">Confirmed</span>
+
+        <div>
+          <div class="confirmed-big-date">Saturday 29 March</div>
+          <div class="confirmed-big-time">Evening</div>
+          <div class="confirmed-location">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            The Crown, Hackney
+          </div>
+        </div>
+
+        <div class="countdown-row">
+          <div class="countdown-dot"></div>
+          <span class="countdown-label">12 days away</span>
+        </div>
+
+        <p class="confirmed-commentary">
+          Done. Saturday 29 March. The Crown, Hackney. No one's allowed to be ill.
+        </p>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <!-- Attendees -->
+      <div class="attendees-section">
+        <span class="section-label">Coming</span>
+        <div class="attendees-row">
+          <div class="attendee-chip">
+            <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#5C8348;font-size:16px;">D</div>
+            <span class="attendee-name">David</span>
+          </div>
+          <div class="attendee-chip">
+            <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#EC4899;font-size:16px;">S</div>
+            <span class="attendee-name">Sarah</span>
+          </div>
+          <div class="attendee-chip">
+            <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#3B82F6;font-size:16px;">J</div>
+            <span class="attendee-name">Jess</span>
+          </div>
+          <div class="attendee-chip">
+            <div class="avatar avatar-ring-yes" style="width:44px;height:44px;background:#8B5CF6;font-size:16px;">T</div>
+            <span class="attendee-name">Tom</span>
+          </div>
+          <!-- Odd one out -->
+          <div class="attendee-chip" style="position:relative;">
+            <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:14px;">🌧️</div>
+            <div class="avatar avatar-ring-no" style="width:44px;height:44px;background:#F59E0B;font-size:16px;">M</div>
+            <span class="attendee-name" style="color:var(--text-tertiary);">Marcus</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <!-- Actions -->
+      <div class="action-row">
+        <button class="btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Share
+        </button>
+        <button class="btn-secondary" style="color:var(--error);border-color:var(--error-light);">
+          ✕ Cancel
+        </button>
+      </div>
+
+      <div class="spacer-lg"></div>
+    </div>
+
+  </div><!-- /phone -->
+</div><!-- /stage -->
+
+<script>
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.demo-btn').forEach(b => {
+      if (b.textContent.trim().toLowerCase().replace(/ /g,'') === name.toLowerCase().replace(/ /g,'') ||
+          (name === 'signin' && b.textContent.includes('Sign')) ||
+          (name === 'confirmed' && b.textContent.includes('Confirmed'))) {
+        b.classList.add('active');
+      }
+    });
+  }
+
+  function toggleRsvp(btn, type) {
+    const card = btn.closest('.slot-card');
+    const buttons = card.querySelectorAll('.rsvp-btn');
+    buttons.forEach(b => {
+      const t = b.onclick.toString().match(/'(\w+)'/)[1];
+      b.className = `rsvp-btn rsvp-${t}-idle`;
+    });
+    btn.className = `rsvp-btn rsvp-${type}-active`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+-- Schedule the nudge Edge Function to run every hour
+-- Requires the pg_cron extension (available on Supabase Pro)
+-- On free tier, use an external cron service to hit the function URL
+
+-- select cron.schedule(
+--   'send-nudges-hourly',
+--   '0 * * * *',
+--   $$
+--     select
+--       net.http_post(
+--         url := current_setting('app.functions_url') || '/send-nudges',
+--         headers := '{"Authorization": "Bearer ' || current_setting('app.service_key') || '"}'::jsonb
+--       )
+--   $$
+-- );
