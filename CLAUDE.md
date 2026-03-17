@@ -154,6 +154,7 @@ All tables have Row Level Security. Users can only access data for groups they b
 - [x] Deployed to GitHub Pages at `https://davideuantrott.github.io/meetup`
 - [x] GitHub Actions workflow building and deploying on every push to `main`
 - [x] Google OAuth sign-in working on live site
+- [x] Group creation working on live site
 - [ ] Edge Functions deployed (send-notification, send-nudges, send-invite)
 - [ ] Resend API key added to Supabase Edge Function secrets
 - [ ] VAPID private key added to Supabase Edge Function secrets
@@ -167,6 +168,9 @@ All tables have Row Level Security. Users can only access data for groups they b
 - `src/hooks/useAuth.ts`: `redirectTo` uses `VITE_APP_URL` instead of `window.location.origin`
 - `src/pages/AuthCallback.tsx`: waits for `SIGNED_IN` event instead of calling `getSession()` immediately
 - `VITE_APP_URL` GitHub secret must have no trailing slash: `https://davideuantrott.github.io/meetup`
+- `src/hooks/useGroup.ts`: `createGroup` pre-generates UUID client-side so `group_members` is inserted before the `groups` SELECT — avoids RLS `is_group_member()` deadlock (groups SELECT policy requires membership, but membership didn't exist yet at point of insert+select)
+- `src/hooks/useGroup.ts`: `fetchGroup` uses `.maybeSingle()` instead of `.single()` to avoid 406 when user has no group
+- `public/sw.js`: added `skipWaiting` + `clients.claim` so new service worker versions take over immediately on deploy
 
 ---
 
