@@ -6,15 +6,7 @@ export function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function handleCallback() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        navigate('/signin');
-        return;
-      }
-
-      const user = session.user;
-
+    async function handleUser(user: import('@supabase/supabase-js').User) {
       // Ensure profile row exists (for Google OAuth users)
       const { data: existing } = await supabase.from('users').select('id').eq('id', user.id).single();
       if (!existing) {
@@ -39,7 +31,18 @@ export function AuthCallback() {
       navigate('/');
     }
 
-    handleCallback();
+    // Wait for Supabase to process the token from the URL hash
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        subscription.unsubscribe();
+        handleUser(session.user);
+      } else if (event === 'INITIAL_SESSION' && !session) {
+        subscription.unsubscribe();
+        navigate('/signin');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   return (
