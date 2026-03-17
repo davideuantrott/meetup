@@ -83,7 +83,10 @@ export function useAuthState() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: {
+        data: { name },
+        emailRedirectTo: `${import.meta.env.VITE_APP_URL}/auth/callback`,
+      },
     });
     if (!error && data.user) {
       // Create profile row
