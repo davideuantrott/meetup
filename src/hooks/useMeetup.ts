@@ -126,6 +126,14 @@ export function useMeetup(meetupId: string | undefined) {
     });
   }
 
+  async function updateMeetup(meetupId: string, fields: { title?: string; location?: string | null; image_url?: string | null }) {
+    const { error } = await supabase.from('meetups').update(fields).eq('id', meetupId);
+    if (!error) {
+      setMeetup(prev => prev ? { ...prev, ...fields } : prev);
+    }
+    return { error };
+  }
+
   return {
     meetup,
     reactions,
@@ -137,6 +145,7 @@ export function useMeetup(meetupId: string | undefined) {
     cancelMeetup,
     addSlot,
     removeSlot,
+    updateMeetup,
     refetch: fetchMeetup,
   };
 }

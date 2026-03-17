@@ -10,6 +10,7 @@ import { InvitePanel } from '../components/group/InvitePanel';
 import { Modal } from '../components/ui/Modal';
 import { Avatar } from '../components/ui/Avatar';
 import { Input } from '../components/ui/Input';
+import { ImageUpload } from '../components/ui/ImageUpload';
 
 export function Home() {
   const { profile, signOut } = useAuth();
@@ -21,6 +22,7 @@ export function Home() {
   const [showArchived, setShowArchived] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const [groupImage, setGroupImage] = useState<string | null>(null);
   const [savingName, setSavingName] = useState(false);
 
   async function handleInviteByEmail(email: string) {
@@ -28,10 +30,15 @@ export function Home() {
     return inviteByEmail(email, group.id, group.invite_code, group.name);
   }
 
-  async function handleSaveGroupName() {
+  async function handleSaveSettings() {
     if (!group || !groupName.trim()) return;
     setSavingName(true);
     await updateGroupName(group.id, groupName.trim());
+    // Save group image if changed
+    if (groupImage !== (group.image_url ?? null)) {
+      const { supabase } = await import('../lib/supabase');
+      await supabase.from('groups').update({ image_url: groupImage }).eq('id', group.id);
+    }
     setSavingName(false);
     setShowSettings(false);
   }
@@ -49,29 +56,39 @@ export function Home() {
 
       {/* Header */}
       <header className="bg-[#F5F7F2] sticky top-0 z-10 pt-4 pb-2 px-5">
-        <div className="max-w-[480px] mx-auto flex items-start justify-between gap-2">
-          <div>
-            <h1
-              className="text-[2rem] leading-[1.1] tracking-[-0.02em] text-[#1A1A1A]"
-              style={{ fontFamily: 'var(--font-display)', fontWeight: 800 }}
-            >
-              {group?.name ?? 'Swimming Pals'}
-            </h1>
-            <p
-              className="text-[1.25rem] leading-[1.2] tracking-[-0.01em] text-[#6B6B6B] mt-0.5"
-              style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
-            >
-              {activeMeetups.length === 0
-                ? 'Nothing on yet'
-                : `${activeMeetups.length} active ${activeMeetups.length === 1 ? 'meetup' : 'meetups'}`}
-            </p>
+        <div className="max-w-screen-lg mx-auto flex items-start justify-between gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Group image if available */}
+            {group?.image_url && (
+              <img
+                src={group.image_url}
+                alt={group.name}
+                className="w-12 h-12 rounded-full object-cover shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+              />
+            )}
+            <div className="min-w-0">
+              <h1
+                className="text-[2rem] leading-[1.1] tracking-[-0.02em] text-[#1A1A1A] truncate"
+                style={{ fontFamily: 'var(--font-display)', fontWeight: 800 }}
+              >
+                {group?.name ?? 'Swimming Pals'}
+              </h1>
+              <p
+                className="text-[1.25rem] leading-[1.2] tracking-[-0.01em] text-[#6B6B6B] mt-0.5"
+                style={{ fontFamily: 'var(--font-display)', fontWeight: 300 }}
+              >
+                {activeMeetups.length === 0
+                  ? 'Nothing on yet'
+                  : `${activeMeetups.length} active ${activeMeetups.length === 1 ? 'meetup' : 'meetups'}`}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-center gap-2 pt-1 shrink-0">
             <IconButton onClick={() => setShowInvite(true)} label="Invite members">
               <UserPlus size={20} strokeWidth={1.75} />
             </IconButton>
             <IconButton
-              onClick={() => { setGroupName(group?.name ?? ''); setShowSettings(true); }}
+              onClick={() => { setGroupName(group?.name ?? ''); setGroupImage(group?.image_url ?? null); setShowSettings(true); }}
               label="Settings"
             >
               {profile ? <Avatar user={profile} size="sm" /> : <Settings size={20} strokeWidth={1.75} />}
@@ -83,11 +100,11 @@ export function Home() {
       {/* Member strip */}
       {members.length > 0 && (
         <div className="px-5 py-3">
-          <div className="max-w-[480px] mx-auto flex items-center gap-3 overflow-x-auto no-scrollbar">
+          <div className="max-w-screen-lg mx-auto flex items-center gap-3 overflow-x-auto no-scrollbar">
             {members.map(m => m.user && (
               <div key={m.user_id} className="flex flex-col items-center gap-1 shrink-0">
                 <Avatar user={m.user} size="sm" />
-                <span className="text-[0.625rem] text-[#9E9E9E] font-medium max-w-[36px] truncate">
+                <span className="text-[0.625rem] text-[#9E9E9E] font-medium max-w-[40px] truncate text-center">
                   {m.user.name.split(' ')[0]}
                 </span>
               </div>
@@ -98,7 +115,7 @@ export function Home() {
 
       {/* Main content */}
       <main className="flex-1 px-5 pb-8">
-        <div className="max-w-[480px] mx-auto flex flex-col gap-6">
+        <div className="max-w-screen-lg mx-auto flex flex-col gap-6">
 
           {/* Active meetups */}
           <section>
@@ -135,7 +152,10 @@ export function Home() {
                 </div>
               </div>
             ) : (
-              <ul className="flex flex-col gap-3" role="list">
+              <ul
+                className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
+                role="list"
+              >
                 {activeMeetups.map(m => (
                   <li key={m.id}>
                     {profile && (
@@ -164,7 +184,7 @@ export function Home() {
               </button>
 
               {showArchived && (
-                <ul className="flex flex-col gap-2 mt-3" role="list">
+                <ul className="grid gap-2 mt-3 sm:grid-cols-2 lg:grid-cols-3" role="list">
                   {archivedMeetups.map(m => (
                     <li key={m.id}>
                       {profile && (
@@ -198,7 +218,7 @@ export function Home() {
         actions={
           <>
             <Button variant="ghost" size="sm" onClick={() => setShowSettings(false)}>Cancel</Button>
-            <Button size="sm" loading={savingName} onClick={handleSaveGroupName}>Save</Button>
+            <Button size="sm" loading={savingName} onClick={handleSaveSettings}>Save</Button>
           </>
         }
       >
@@ -209,6 +229,15 @@ export function Home() {
             value={groupName}
             onChange={e => setGroupName(e.target.value)}
           />
+          {profile && (
+            <ImageUpload
+              currentUrl={groupImage}
+              userId={profile.id}
+              onUploaded={setGroupImage}
+              label="Group photo"
+              shape="circle"
+            />
+          )}
           <hr className="border-[#E0E0E0]" />
           <Button
             variant="ghost"

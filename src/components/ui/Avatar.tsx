@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { User, Availability } from '../../types';
 
 interface AvatarProps {
@@ -21,10 +22,12 @@ const textSize: Record<string, string> = {
 };
 
 export function Avatar({ user, availability, size = 'md', isOddOneOut, hasNotResponded }: AvatarProps) {
+  const [imgError, setImgError] = useState(false);
   const px = sizePx[size];
   const initial = user.name.charAt(0).toUpperCase();
+  const showPhoto = !!user.avatar_url && !imgError;
 
-  // Ring colour
+  // Ring / filter style
   const ringStyle =
     availability === 'yes'
       ? { boxShadow: '0 0 0 2.5px #FFFFFF, 0 0 0 5px #4CAF50' }
@@ -50,7 +53,7 @@ export function Avatar({ user, availability, size = 'md', isOddOneOut, hasNotRes
       <div
         className={`
           relative rounded-full flex items-center justify-center font-semibold text-white select-none
-          transition-all duration-[200ms]
+          transition-all duration-[200ms] overflow-hidden
           ${textSize[size]}
         `}
         style={{
@@ -62,7 +65,18 @@ export function Avatar({ user, availability, size = 'md', isOddOneOut, hasNotRes
         }}
         aria-label={`${user.name}${availability ? ` — ${availability}` : ''}`}
       >
-        {initial}
+        {showPhoto ? (
+          <img
+            src={user.avatar_url!}
+            alt={user.name}
+            width={px}
+            height={px}
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          initial
+        )}
 
         {/* Overlay icons */}
         {availability === 'no' && (

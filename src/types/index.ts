@@ -8,6 +8,7 @@ export interface User {
   name: string;
   email: string;
   avatar_colour: string;
+  avatar_url?: string | null;
   created_at: string;
 }
 
@@ -16,6 +17,7 @@ export interface Group {
   name: string;
   created_by: string;
   invite_code: string;
+  image_url?: string | null;
   created_at: string;
 }
 
@@ -31,6 +33,7 @@ export interface Meetup {
   group_id: string;
   title: string;
   location: string | null;
+  image_url?: string | null;
   created_by: string;
   status: MeetupStatus;
   created_at: string;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, Share2, Plus, CheckCircle, XCircle, X } from 'lucide-react';
+import { ChevronLeft, Share2, Plus, CheckCircle, XCircle, X, Pencil } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useGroup } from '../hooks/useGroup';
 import { useMeetup } from '../hooks/useMeetup';
@@ -10,6 +10,8 @@ import { ConfirmedView } from '../components/meetup/ConfirmedView';
 import { Avatar } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { Input } from '../components/ui/Input';
+import { ImageUpload } from '../components/ui/ImageUpload';
 import { getMeetupCommentary } from '../utils/commentary';
 import { getBestSlot } from '../utils/slots';
 import type { Availability, ProposedSlot } from '../types';
@@ -22,12 +24,17 @@ export function MeetupView() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { members } = useGroup(profile?.id);
-  const { meetup, reactions, loading, respond, addReaction, confirmMeetup, cancelMeetup, addSlot, removeSlot } = useMeetup(meetupId);
+  const { meetup, reactions, loading, respond, addReaction, confirmMeetup, cancelMeetup, addSlot, removeSlot, updateMeetup } = useMeetup(meetupId);
 
   const [showSharePrompt, setShowSharePrompt] = useState(isNew);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showRemoveModal, setShowRemoveModal] = useState<ProposedSlot | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editLocation, setEditLocation] = useState('');
+  const [editImage, setEditImage] = useState<string | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
   const [confirmingSlotId, setConfirmingSlotId] = useState<string | null>(null);
   const [commentary, setCommentary] = useState('');
 
@@ -78,6 +85,18 @@ export function MeetupView() {
     navigate('/');
   }
 
+  async function handleSaveEdit() {
+    if (!meetupId || !editTitle.trim()) return;
+    setSavingEdit(true);
+    await updateMeetup(meetupId, {
+      title: editTitle.trim(),
+      location: editLocation.trim() || null,
+      image_url: editImage,
+    });
+    setSavingEdit(false);
+    setShowEditModal(false);
+  }
+
   function handleShare() {
     const url = `${window.location.origin}/meetup/${meetupId}`;
     const title = meetup?.title ?? 'Meetup';
@@ -116,7 +135,7 @@ export function MeetupView() {
 
       {/* Header */}
       <header className="bg-[#F5F7F2] sticky top-0 z-10 pt-4 pb-2 px-5">
-        <div className="max-w-[480px] mx-auto flex items-center gap-3">
+        <div className="max-w-screen-lg mx-auto flex items-center gap-3">
           <button
             onClick={() => navigate('/')}
             aria-label="Back"
@@ -125,12 +144,23 @@ export function MeetupView() {
             <ChevronLeft size={22} strokeWidth={1.75} />
           </button>
           <div className="flex-1 min-w-0">
-            <h1
-              className="text-[1.25rem] font-bold text-[#1A1A1A] truncate leading-tight tracking-[-0.01em]"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              {meetup.title}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1
+                className="text-[1.25rem] font-bold text-[#1A1A1A] truncate leading-tight tracking-[-0.01em]"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {meetup.title}
+              </h1>
+              {isCreator && (
+                <button
+                  onClick={() => { setEditTitle(meetup.title); setEditLocation(meetup.location ?? ''); setEditImage(meetup.image_url ?? null); setShowEditModal(true); }}
+                  aria-label="Edit meetup"
+                  className="shrink-0 w-7 h-7 flex items-center justify-center rounded-full text-[#9E9E9E] hover:text-[#5C8348] hover:bg-[#EBF0E6] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C8348]"
+                >
+                  <Pencil size={14} strokeWidth={1.75} />
+                </button>
+              )}
+            </div>
             {meetup.location && (
               <p className="text-[0.75rem] text-[#6B6B6B] truncate">{meetup.location}</p>
             )}
@@ -145,47 +175,101 @@ export function MeetupView() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-[480px] mx-auto w-full px-5 py-4 flex flex-col gap-5 pb-10">
-
-        {/* Commentary */}
-        <div
-          className="bg-white rounded-2xl px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <p className="text-[0.875rem] text-[#6B6B6B] italic leading-relaxed">
-            {commentary || 'Waiting for responses.'}
-          </p>
+      {/* Meetup hero image */}
+      {meetup.image_url && (
+        <div className="max-w-screen-lg mx-auto w-full px-5 pt-2">
+          <img
+            src={meetup.image_url}
+            alt={meetup.title}
+            className="w-full h-40 md:h-56 object-cover rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+          />
         </div>
+      )}
 
-        {/* Avatar row */}
-        <div
-          className="flex gap-4 flex-wrap"
-          aria-label="Group members and response status"
-        >
-          {members.map(m => {
-            if (!m.user) return null;
-            const userResponses = allResponses.filter(r => r.user_id === m.user_id);
-            const hasYes = userResponses.some(r => r.availability === 'yes');
-            const hasMaybe = userResponses.some(r => r.availability === 'maybe');
-            const allNo = userResponses.length > 0 && userResponses.every(r => r.availability === 'no');
-            const avail = hasYes ? 'yes' : hasMaybe ? 'maybe' : allNo ? 'no' : undefined;
-            return (
-              <div key={m.user_id} className="flex flex-col items-center gap-1">
-                <Avatar user={m.user} availability={avail} hasNotResponded={!userResponses.length} size="md" />
-                <span className="text-[0.625rem] text-[#9E9E9E] font-medium">{m.user.name.split(' ')[0]}</span>
-              </div>
-            );
-          })}
-        </div>
+      {/* Desktop two-column / mobile single-column */}
+      <main className="flex-1 max-w-screen-lg mx-auto w-full px-5 py-4 pb-10
+        lg:grid lg:grid-cols-[1fr_1.4fr] lg:gap-8 lg:items-start">
 
-        {/* Date carousel */}
-        <section aria-labelledby="dates-heading">
-          <h2 id="dates-heading" className="sr-only">Date options</h2>
+        {/* Left panel: commentary, member row, creator controls, reactions */}
+        <div className="flex flex-col gap-5">
+
+          {/* Commentary */}
           <div
-            className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory no-scrollbar"
-            role="list"
+            className="bg-white rounded-2xl px-4 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)]"
+            aria-live="polite"
+            aria-atomic="true"
           >
+            <p className="text-[0.875rem] text-[#6B6B6B] italic leading-relaxed">
+              {commentary || 'Waiting for responses.'}
+            </p>
+          </div>
+
+          {/* Avatar row */}
+          <div
+            className="flex gap-4 flex-wrap"
+            aria-label="Group members and response status"
+          >
+            {members.map(m => {
+              if (!m.user) return null;
+              const userResponses = allResponses.filter(r => r.user_id === m.user_id);
+              const hasYes = userResponses.some(r => r.availability === 'yes');
+              const hasMaybe = userResponses.some(r => r.availability === 'maybe');
+              const allNo = userResponses.length > 0 && userResponses.every(r => r.availability === 'no');
+              const avail = hasYes ? 'yes' : hasMaybe ? 'maybe' : allNo ? 'no' : undefined;
+              return (
+                <div key={m.user_id} className="flex flex-col items-center gap-1">
+                  <Avatar user={m.user} availability={avail} hasNotResponded={!userResponses.length} size="md" />
+                  <span className="text-[0.625rem] text-[#9E9E9E] font-medium">{m.user.name.split(' ')[0]}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Creator controls */}
+          {isCreator && isOpen && (
+            <section className="flex flex-col gap-3" aria-label="Meetup controls">
+              {bestSlot && (
+                <Button
+                  onClick={() => { setConfirmingSlotId(bestSlot.id); setShowConfirmModal(true); }}
+                  size="lg"
+                  className="w-full"
+                >
+                  <CheckCircle size={18} strokeWidth={2} />
+                  Confirm {formatSlotDate(bestSlot)}
+                </Button>
+              )}
+              <div className="flex gap-2">
+                {slots.length < 5 && <AddSlotInline meetupId={meetup.id} onAdd={addSlot} />}
+                <Button variant="danger" size="sm" onClick={() => setShowCancelModal(true)} className="flex-1">
+                  <XCircle size={16} strokeWidth={1.75} />
+                  Cancel meetup
+                </Button>
+              </div>
+              {!bestSlot && slots.length > 0 && (
+                <p className="text-[0.8125rem] text-[#6B6B6B] text-center italic">
+                  No clear winner. You might need more options.
+                </p>
+              )}
+            </section>
+          )}
+
+          {/* Reactions / chat — below controls on mobile, in left panel on desktop */}
+          <ReactionsBar
+            reactions={reactions}
+            onReact={content => addReaction(meetup.id, profile.id, content)}
+            disabled={!isOpen}
+          />
+        </div>
+
+        {/* Right panel: slot cards stacked vertically */}
+        <section aria-labelledby="dates-heading" className="mt-5 lg:mt-0">
+          <h2
+            id="dates-heading"
+            className="text-[0.8125rem] font-medium text-[#9E9E9E] uppercase tracking-wider mb-3"
+          >
+            Date options
+          </h2>
+          <div className="flex flex-col gap-4" role="list">
             {slots
               .sort((a, b) => a.date.localeCompare(b.date))
               .map(slot => (
@@ -203,7 +287,7 @@ export function MeetupView() {
                       type="button"
                       aria-label={`Remove ${formatSlotDate(slot)}`}
                       onClick={() => setShowRemoveModal(slot)}
-                      className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-full text-[#9E9E9E] hover:text-[#F44336] hover:bg-[#FFEBEE] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F44336]"
+                      className="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-[#9E9E9E] hover:text-[#F44336] hover:bg-[#FFEBEE] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F44336]"
                     >
                       <X size={14} strokeWidth={2} />
                     </button>
@@ -212,41 +296,6 @@ export function MeetupView() {
               ))}
           </div>
         </section>
-
-        {/* Creator controls */}
-        {isCreator && isOpen && (
-          <section className="flex flex-col gap-3" aria-label="Meetup controls">
-            {bestSlot && (
-              <Button
-                onClick={() => { setConfirmingSlotId(bestSlot.id); setShowConfirmModal(true); }}
-                size="lg"
-                className="w-full"
-              >
-                <CheckCircle size={18} strokeWidth={2} />
-                Confirm {formatSlotDate(bestSlot)}
-              </Button>
-            )}
-            <div className="flex gap-2">
-              {slots.length < 5 && <AddSlotInline meetupId={meetup.id} onAdd={addSlot} />}
-              <Button variant="danger" size="sm" onClick={() => setShowCancelModal(true)} className="flex-1">
-                <XCircle size={16} strokeWidth={1.75} />
-                Cancel meetup
-              </Button>
-            </div>
-            {!bestSlot && slots.length > 0 && (
-              <p className="text-[0.8125rem] text-[#6B6B6B] text-center italic">
-                No clear winner. You might need more options.
-              </p>
-            )}
-          </section>
-        )}
-
-        {/* Reactions */}
-        <ReactionsBar
-          reactions={reactions}
-          onReact={content => addReaction(meetup.id, profile.id, content)}
-          disabled={!isOpen}
-        />
       </main>
 
       {/* Share prompt toast */}
@@ -264,6 +313,43 @@ export function MeetupView() {
           </div>
         </div>
       )}
+
+      {/* Edit meetup modal */}
+      <Modal
+        open={showEditModal}
+        title="Edit meetup"
+        onClose={() => setShowEditModal(false)}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setShowEditModal(false)}>Cancel</Button>
+            <Button size="sm" loading={savingEdit} onClick={handleSaveEdit} disabled={!editTitle.trim()}>Save</Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <Input
+            label="Title"
+            id="edit-title"
+            value={editTitle}
+            onChange={e => setEditTitle(e.target.value)}
+          />
+          <Input
+            label="Location (optional)"
+            id="edit-location"
+            value={editLocation}
+            onChange={e => setEditLocation(e.target.value)}
+          />
+          {profile && (
+            <ImageUpload
+              currentUrl={editImage}
+              userId={profile.id}
+              onUploaded={setEditImage}
+              label="Meetup photo (optional)"
+              shape="rect"
+            />
+          )}
+        </div>
+      </Modal>
 
       {/* Confirm modal */}
       <Modal

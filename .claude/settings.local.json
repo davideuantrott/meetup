@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:/Users/david/OneDrive/Documents/GitHub/meetup\" fetch)",
+      "Bash(git -C \"c:/Users/david/OneDrive/Documents/GitHub/meetup\" status)",
+      "Bash(git -C \"c:/Users/david/OneDrive/Documents/GitHub/meetup\" pull)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

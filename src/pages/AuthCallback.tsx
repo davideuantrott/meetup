@@ -17,7 +17,14 @@ export function AuthCallback() {
           name: user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? 'Friend',
           email: user.email!,
           avatar_colour: colour,
+          avatar_url: user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null,
         });
+      } else {
+        // Keep avatar_url fresh (Google URLs can expire/change)
+        const freshUrl = user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null;
+        if (freshUrl) {
+          await supabase.from('users').update({ avatar_url: freshUrl }).eq('id', user.id);
+        }
       }
 
       // Handle pending invite
