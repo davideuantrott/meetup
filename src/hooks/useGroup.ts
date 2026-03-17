@@ -26,7 +26,7 @@ export function useGroup(userId: string | undefined) {
         .select('group_id')
         .eq('user_id', uid)
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (!membership) {
         setGroup(null);
@@ -52,18 +52,38 @@ export function useGroup(userId: string | undefined) {
   }
 
   async function createGroup(name: string, creatorId: string): Promise<Group | null> {
-    const { data, error } = await supabase
+    // Pre-generate ID so we can add the creator to group_members before SELECTing.
+    // The groups SELECT policy uses is_group_member(), which requires membership to
+    // exist first — so we must insert the member before we can read the group back.
+    const groupId = crypto.randomUUID();
+
+    const { error: insertError } = await supabase
       .from('groups')
-      .insert({ name, created_by: creatorId })
-      .select()
+      .insert({ id: groupId, name, created_by: creatorId });
+
+    if (insertError) {
+      console.error('[createGroup] groups insert failed:', insertError);
+      return null;
+    }
+
+    // Add creator as member (now the SELECT policy will pass)
+    const { error: memberError } = await supabase
+      .from('group_members')
+      .insert({ group_id: groupId, user_id: creatorId });
+
+    if (memberError) {
+      console.error('[createGroup] group_members insert failed:', memberError);
+    }
+
+    const { data: groupData, error: selectError } = await supabase
+      .from('groups')
+      .select('*')
+      .eq('id', groupId)
       .single();
 
-    if (error || !data) return null;
-    const g = data as Group;
-
-    // Add creator as member
-    await supabase.from('group_members').insert({ group_id: g.id, user_id: creatorId });
-
+    if (selectError) console.error('[createGroup] groups select failed:', selectError);
+    if (!groupData) return null;
+    const g = groupData as Group;
     setGroup(g);
     await fetchGroup(creatorId);
     return g;
