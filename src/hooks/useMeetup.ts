@@ -86,6 +86,22 @@ export function useMeetup(meetupId: string | undefined) {
   }, [meetupId, fetchMeetup]);
 
   async function respond(slotId: string, userId: string, availability: Availability) {
+    // Optimistic update — update local state immediately so the UI responds instantly
+    setMeetup(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        slots: prev.slots?.map(s => {
+          if (s.id !== slotId) return s;
+          const existing = (s.responses ?? []).findIndex(r => r.user_id === userId);
+          const responses = existing >= 0
+            ? (s.responses ?? []).map((r, i) => i === existing ? { ...r, availability } : r)
+            : [...(s.responses ?? []), { id: `opt-${Date.now()}`, slot_id: slotId, user_id: userId, availability, updated_at: new Date().toISOString() }];
+          return { ...s, responses };
+        }),
+      };
+    });
+
     await supabase
       .from('responses')
       .upsert({ slot_id: slotId, user_id: userId, availability, updated_at: new Date().toISOString() },
